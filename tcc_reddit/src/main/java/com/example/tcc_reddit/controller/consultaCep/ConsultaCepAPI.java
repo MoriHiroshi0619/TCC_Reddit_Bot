@@ -23,7 +23,7 @@ public class ConsultaCepAPI {
 
     @GetMapping("teste")
     public String teste(){
-        return "Olá mundo";
+        return "Hello World Desu Yone Kusotare !!";
     }
 
 }
