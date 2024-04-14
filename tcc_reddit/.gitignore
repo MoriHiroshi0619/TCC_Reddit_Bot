@@ -5,7 +5,9 @@ target/
 !**/src/test/**/target/
 
 ### Escondendo ###
-*.properties
+application.properties
+
+
 
 ### STS ###
 .apt_generated
