@@ -16,8 +16,14 @@ public class ConsultaCepAPI {
     @GetMapping("{cep}")
     public CepResultadoDTO consultaCep(@PathVariable("cep") String cep){
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<CepResultadoDTO> resultado = restTemplate.getForEntity("viacep.com.br/ws/01001000/json/", CepResultadoDTO.class);
-
+        ResponseEntity<CepResultadoDTO> resultado = restTemplate.getForEntity( String.format("https://viacep.com.br/ws/%s/json", cep), CepResultadoDTO.class);
+        System.out.println(resultado);
         return resultado.getBody();
     }
+
+    @GetMapping("teste")
+    public String teste(){
+        return "Olá mundo";
+    }
+
 }

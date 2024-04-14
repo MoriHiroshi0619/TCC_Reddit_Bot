@@ -2,11 +2,12 @@ package com.example.tcc_reddit.controller.consultaCep;
 
 public class CepResultadoDTO {
     private String cep;
-    private String logadouro;
+    private String logradouro;
     private String complemento;
     private String bairro;
     private String localidade;
     private String uf;
+    private String ibge;
     private String gia;
     private String ddd;
     private String siafi;
@@ -19,12 +20,12 @@ public class CepResultadoDTO {
         this.cep = cep;
     }
 
-    public String getLogadouro() {
-        return logadouro;
+    public String getLogradouro() {
+        return logradouro;
     }
 
-    public void setLogadouro(String logadouro) {
-        this.logadouro = logadouro;
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
     }
 
     public String getComplemento() {
@@ -57,6 +58,14 @@ public class CepResultadoDTO {
 
     public void setUf(String uf) {
         this.uf = uf;
+    }
+
+    public String getIbge() {
+        return ibge;
+    }
+
+    public void setIbge(String ibge) {
+        this.ibge = ibge;
     }
 
     public String getGia() {
