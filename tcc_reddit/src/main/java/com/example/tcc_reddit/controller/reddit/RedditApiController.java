@@ -35,10 +35,10 @@ public class RedditApiController {
 
         HttpHeaders header = new HttpHeaders();
         header.set("User-Agent", "tccBot");
-        header.set("Authorization", "Bearer" + accessToken);
-        HttpEntity<String> entity = new HttpEntity<>(header);
+        header.set("Authorization", "Bearer " + accessToken);
+        HttpEntity<String> headerEntity = new HttpEntity<>(header);
 
-        ResponseEntity<String> responce = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> responce = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
 
         if(responce.getStatusCode() == HttpStatus.OK){
             return responce.getBody();
@@ -46,4 +46,5 @@ public class RedditApiController {
             return "Erro ao recuperar o Karma do usuário.";
         }
     }
+
 }
