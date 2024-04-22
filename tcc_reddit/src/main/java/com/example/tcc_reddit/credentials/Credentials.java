@@ -32,7 +32,7 @@ public class Credentials {
             return accessToken.getAccess_token();
         }else{
             this.ObterAccessToken();
-            return accessToken.getToken_type();
+            return accessToken.getAccess_token();
         }
     }
 
