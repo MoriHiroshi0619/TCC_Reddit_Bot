@@ -67,18 +67,4 @@ public class Credentials {
         ResponseEntity<AccessTokenResponce> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AccessTokenResponce.class);
         accessToken = response.getBody();
     }
-
-    /*private void ObterAccessToken(){
-        RestTemplate restTemplate = new RestTemplate();sao
-        String url_request = "https://www.reddit.com/api/v1/access_token";
-        String grant_type = "password";
-        String requestBody =
-                "grant_type=" + grant_type
-                + "&client_id=" + this.cliend_id
-                + "&password" + this.secret_id;
-        accessToken = restTemplate.postForObject(url_request, requestBody, AccessTokenResponce.class);
-    }*/
-
-
-
 }
