@@ -10,19 +10,17 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/reddit-api")
-public class RedditApiController {
-
-    private static String accessToken;
+public class RedditApiController extends BaseRedditController {
 
     @Autowired
     public RedditApiController(Credentials credentials){
-        accessToken = credentials.getAccessToken();
+        super(credentials);
     }
 
     @GetMapping("/accessToken")
     public String getMyAcessToken(){
-        if(accessToken != null){
-            return accessToken;
+        if(getAccesstoken() != null){
+            return getAccesstoken();
         }else{
             return "Erro ao recuperar o accessToken.";
         }
@@ -35,7 +33,7 @@ public class RedditApiController {
 
         HttpHeaders header = new HttpHeaders();
         header.set("User-Agent", "tccBot");
-        header.set("Authorization", "Bearer " + accessToken);
+        header.set("Authorization", "Bearer " + getAccesstoken());
         HttpEntity<String> headerEntity = new HttpEntity<>(header);
 
         ResponseEntity<String> responce = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
