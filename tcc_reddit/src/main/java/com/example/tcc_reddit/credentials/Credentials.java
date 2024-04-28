@@ -25,7 +25,7 @@ public class Credentials {
     @Value("${reddit.password}")
     private String password;
 
-    private static AccessTokenResponce accessToken;
+    private static AccessTokenDTO accessToken;
 
     public String getAccessToken(){
         if(this.accessTokenAindaEhValido()){
@@ -64,7 +64,7 @@ public class Credentials {
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://www.reddit.com/api/v1/access_token";
 
-        ResponseEntity<AccessTokenResponce> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AccessTokenResponce.class);
+        ResponseEntity<AccessTokenDTO> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, AccessTokenDTO.class);
         accessToken = response.getBody();
     }
 }

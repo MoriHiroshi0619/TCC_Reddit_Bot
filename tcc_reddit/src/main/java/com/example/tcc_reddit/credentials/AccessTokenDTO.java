@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AccessTokenResponce {
+public class AccessTokenDTO {
 
     @JsonProperty("access_token")
     private String access_token;
