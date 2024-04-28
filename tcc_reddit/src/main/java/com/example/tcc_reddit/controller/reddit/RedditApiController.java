@@ -18,7 +18,7 @@ public class RedditApiController extends BaseRedditController {
     }
 
     @GetMapping("/accessToken")
-    public String getMyAcessToken(){
+    public String getMyAccessToken(){
         if(getAccesstoken() != null){
             return getAccesstoken();
         }else{
@@ -29,17 +29,17 @@ public class RedditApiController extends BaseRedditController {
     @GetMapping("/meu-karma")
     public String getMyKarma(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://oauth.reddit.com/api/v1/me/karma";
+        String url = getEndpoint(RedditEndpoint.KARMA);
 
         HttpHeaders header = new HttpHeaders();
-        header.set("User-Agent", "tccBot");
-        header.set("Authorization", "Bearer " + getAccesstoken());
+        header.set("User-Agent", getUserAgent());
+        header.set("Authorization", getAccesstoken());
         HttpEntity<String> headerEntity = new HttpEntity<>(header);
 
-        ResponseEntity<String> responce = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
 
-        if(responce.getStatusCode() == HttpStatus.OK){
-            return responce.getBody();
+        if(response.getStatusCode() == HttpStatus.OK){
+            return response.getBody();
         } else {
             return "Erro ao recuperar o Karma do usuário.";
         }
