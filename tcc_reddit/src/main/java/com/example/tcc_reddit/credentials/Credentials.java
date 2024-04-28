@@ -1,6 +1,6 @@
 package com.example.tcc_reddit.credentials;
 
-import com.example.tcc_reddit.DTOs.AccessTokenDTO;
+import com.example.tcc_reddit.DTOs.reddit.AccessTokenDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
