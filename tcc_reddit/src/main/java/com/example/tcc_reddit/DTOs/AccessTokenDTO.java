@@ -1,4 +1,4 @@
-package com.example.tcc_reddit.credentials;
+package com.example.tcc_reddit.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
