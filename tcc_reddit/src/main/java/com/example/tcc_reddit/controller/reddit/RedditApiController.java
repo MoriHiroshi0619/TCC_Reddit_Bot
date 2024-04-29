@@ -16,13 +16,17 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
-
-    //@todo deixar uma instancia de RestTemplate e HttpHeaders pronta no construtor, vai se repetir em todos os metodos
     //@todo entender porque o que acontece no DTO com posts com mais atributos
+    private final RestTemplate restTemplate;
+    private final HttpHeaders header;
     @Autowired
     public RedditApiController(Credentials credentials)
     {
         super(credentials);
+        this.restTemplate = new RestTemplate();
+        this.header = new HttpHeaders();
+        this.header.set("User-Agent", getUserAgent());
+        this.header.set("Authorization", getAccesstoken());
     }
 
     @GetMapping("/accessToken")
@@ -36,16 +40,12 @@ public class RedditApiController extends BaseRedditController {
 
     @GetMapping("/my-karma")
     public KarmaDTO getMyKarma() throws RedditApiException{
-        RestTemplate restTemplate = new RestTemplate();
         String url = getEndpoint(RedditEndpoint.KARMA);
 
-        HttpHeaders header = new HttpHeaders();
-        header.set("User-Agent", getUserAgent());
-        header.set("Authorization", getAccesstoken());
-        HttpEntity<String> headerEntity = new HttpEntity<>(header);
+        HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
         try{
-            ResponseEntity<KarmaDTO> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, KarmaDTO.class);
+            ResponseEntity<KarmaDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, KarmaDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
@@ -64,13 +64,9 @@ public class RedditApiController extends BaseRedditController {
     @GetMapping("/new-posts-from/{subreddit}")
     public RedditPostDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
         //Os paremetros para essa requisição vão direto na url, não no body...
-        RestTemplate restTemplate = new RestTemplate();
         String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit + "?limit=1");
 
-        HttpHeaders header = new HttpHeaders();
-        header.set("User-Agent", getUserAgent());
-        header.set("Authorization", getAccesstoken());
-        HttpEntity<String> headerEntity = new HttpEntity<>(header);
+        HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
         try{
             ResponseEntity<RedditPostDTO> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditPostDTO.class);
