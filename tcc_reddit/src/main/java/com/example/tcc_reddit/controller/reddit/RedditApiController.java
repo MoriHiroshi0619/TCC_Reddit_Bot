@@ -1,6 +1,7 @@
 package com.example.tcc_reddit.controller.reddit;
 
 import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
+import com.example.tcc_reddit.DTOs.reddit.posts.RedditPostDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,9 +17,8 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
 
-    //@todo implementar tratamento de exceções (try catch)
     //@todo deixar uma instancia de RestTemplate e HttpHeaders pronta no construtor, vai se repetir em todos os metodos
-    //@todo criar DIR de DTO's para serem salvos
+    //@todo entender porque o que acontece no DTO com posts com mais atributos
     @Autowired
     public RedditApiController(Credentials credentials)
     {
@@ -62,21 +62,30 @@ public class RedditApiController extends BaseRedditController {
     }
 
     @GetMapping("/new-posts-from/{subreddit}")
-    public String getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit){
+    public RedditPostDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
+        //Os paremetros para essa requisição vão direto na url, não no body...
         RestTemplate restTemplate = new RestTemplate();
-        String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit);
+        String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit + "?limit=1");
 
         HttpHeaders header = new HttpHeaders();
         header.set("User-Agent", getUserAgent());
         header.set("Authorization", getAccesstoken());
         HttpEntity<String> headerEntity = new HttpEntity<>(header);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
+        try{
+            ResponseEntity<RedditPostDTO> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditPostDTO.class);
 
-        if(response.getStatusCode() == HttpStatus.OK){
-            return response.getBody();
-        }else{
-            return "Erro ao recuperar o posts desse Subreddit";
+            if(response.getStatusCode() == HttpStatus.OK){
+                return response.getBody();
+            }else{
+                return null;
+            }
+        }catch(HttpClientErrorException e){
+            throw new RedditApiException("Erro do cliente: " + e.getMessage());
+        }catch (HttpServerErrorException e){
+            throw new RedditApiException("Erro do servidor: " + e.getMessage());
+        }catch (Exception e){
+            throw new RedditApiException("Error: " + e.getMessage());
         }
     }
 }
