@@ -1,5 +1,6 @@
 package com.example.tcc_reddit.controller.reddit;
 
+import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -32,7 +35,7 @@ public class RedditApiController extends BaseRedditController {
     }
 
     @GetMapping("/my-karma")
-    public String getMyKarma(){
+    public KarmaDTO getMyKarma() throws RedditApiException{
         RestTemplate restTemplate = new RestTemplate();
         String url = getEndpoint(RedditEndpoint.KARMA);
 
@@ -41,12 +44,20 @@ public class RedditApiController extends BaseRedditController {
         header.set("Authorization", getAccesstoken());
         HttpEntity<String> headerEntity = new HttpEntity<>(header);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, String.class);
+        try{
+            ResponseEntity<KarmaDTO> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, KarmaDTO.class);
 
-        if(response.getStatusCode() == HttpStatus.OK){
-            return response.getBody();
-        } else {
-            return "Erro ao recuperar o Karma do usuário.";
+            if(response.getStatusCode() == HttpStatus.OK){
+                return response.getBody();
+            }else{
+                return null;
+            }
+        }catch(HttpClientErrorException e){
+            throw new RedditApiException("Erro do cliente: " + e.getMessage());
+        }catch (HttpServerErrorException e){
+            throw new RedditApiException("Erro do servidor: " + e.getMessage());
+        }catch (Exception e){
+            throw new RedditApiException("Error: " + e.getMessage());
         }
     }
 
