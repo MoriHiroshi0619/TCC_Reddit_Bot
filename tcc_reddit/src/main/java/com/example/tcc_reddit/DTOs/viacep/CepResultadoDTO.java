@@ -1,4 +1,4 @@
-package com.example.tcc_reddit.controller.consultaCep;
+package com.example.tcc_reddit.DTOs.viacep;
 
 import lombok.Getter;
 import lombok.Setter;

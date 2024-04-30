@@ -15,29 +15,44 @@ abstract public class BaseRedditController {
     }
 
     enum RedditEndpoint {
-        KARMA("/api/v1/me/karma");
-        private final String value;
+        KARMA("/api/v1/me/karma"),
+        SUBREDDIT_NEW("/r/{subreddit}/new");
+        private final String path;
 
-        RedditEndpoint(String value) {
-            this.value = value;
+        RedditEndpoint(String path) {
+            this.path = path;
         }
 
-        public String getValue() {
-            return value;
+        public String getPath() {
+            return path;
+        }
+
+        public String getPathWithSubreddit(String subreddit) {
+            return this.path.replace("{subreddit}", subreddit);
         }
 
     }
 
-    protected String getAccesstoken(){
+    protected String getAccesstoken()
+    {
         return "Bearer " + accesstoken;
     }
 
-    protected String getUserAgent(){
+    protected String getUserAgent()
+    {
         return this.userAgent;
+
     }
 
-    protected String getEndpoint(RedditEndpoint endpoint) {
-        return baseUrl + endpoint.getValue();
+    protected String getEndpoint(RedditEndpoint endpoint)
+    {
+        return baseUrl + endpoint.getPath();
     }
+
+    protected String getEndpointPathWithSubreddit(RedditEndpoint endpoint, String subreddit) {
+        return baseUrl + endpoint.getPathWithSubreddit(subreddit);
+    }
+
+
 
 }
