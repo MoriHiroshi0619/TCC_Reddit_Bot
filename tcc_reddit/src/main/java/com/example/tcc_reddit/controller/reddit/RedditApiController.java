@@ -16,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
-    //@todo entender porque o que acontece no DTO com posts com mais atributos
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
     @Autowired
