@@ -68,7 +68,7 @@ public class RedditApiController extends BaseRedditController {
         HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
         try{
-            ResponseEntity<RedditPostDTO> response = restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditPostDTO.class);
+            ResponseEntity<RedditPostDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditPostDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
