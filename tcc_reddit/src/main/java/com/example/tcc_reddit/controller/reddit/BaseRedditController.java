@@ -16,8 +16,9 @@ abstract public class BaseRedditController {
 
     enum RedditEndpoint {
         KARMA("/api/v1/me/karma"),
-        SUBREDDIT_NEW("/r/{subreddit}/new"),
-        NEW_POST("/api/submit");
+        SUBREDDIT_NEW("/r/{param}/new"),
+        NEW_POST("/api/submit"),
+        POST_COMENTS("/comments/{param}");
         private final String path;
 
         RedditEndpoint(String path) {
@@ -28,8 +29,8 @@ abstract public class BaseRedditController {
             return path;
         }
 
-        public String getPathWithSubreddit(String subreddit) {
-            return this.path.replace("{subreddit}", subreddit);
+        public String getPathWithParam(String parametro) {
+            return this.path.replace("{param}", parametro);
         }
 
     }
@@ -49,7 +50,7 @@ abstract public class BaseRedditController {
         return baseUrl + endpoint.getPath();
     }
 
-    protected String getEndpointPathWithSubreddit(RedditEndpoint endpoint, String subreddit) {
-        return baseUrl + endpoint.getPathWithSubreddit(subreddit);
+    protected String getEndpointPathWithParam(RedditEndpoint endpoint, String parametro) {
+        return baseUrl + endpoint.getPathWithParam(parametro);
     }
 }

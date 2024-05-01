@@ -63,7 +63,7 @@ public class RedditApiController extends BaseRedditController {
     @GetMapping("/new-posts-from/{subreddit}")
     public RedditPostDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
         //Os paremetros para essa requisição vão direto na url, não no body...
-        String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit);
+        String url = getEndpointPathWithParam(RedditEndpoint.SUBREDDIT_NEW, subreddit);
 
         HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
@@ -84,8 +84,31 @@ public class RedditApiController extends BaseRedditController {
         }
     }
 
+    @GetMapping("/comments-from-a-post/{postID}")
+    public Object getCommentsFromAPost(@PathVariable("postID") String postID) throws RedditApiException{
+        String url = getEndpointPathWithParam(RedditEndpoint.POST_COMENTS, postID);
+        HttpEntity<String> header = new HttpEntity<>(this.header);
+
+        try{
+            ResponseEntity<Object> response = this.restTemplate.exchange(url, HttpMethod.GET, header, Object.class);
+
+            if(response.getStatusCode() == HttpStatus.OK){
+                return response.getBody();
+            }else{
+                return null;
+            }
+
+        }catch(HttpClientErrorException e){
+            throw new RedditApiException("Erro do cliente: " + e.getMessage());
+        }catch (HttpServerErrorException e){
+            throw new RedditApiException("Erro do servidor: " + e.getMessage());
+        }catch (Exception e){
+            throw new RedditApiException("Error: " + e.getMessage());
+        }
+    }
+
     //@todo quando for implementado o front-end e se der tempo eu implemento uma interface interativa para esse metodo
-    @PostMapping("submit-new-post")
+    @PostMapping("/submit-new-post")
     public RedditPostSubmitDTO newPostToSubreddit() throws RedditApiException{
         String url = getEndpoint(RedditEndpoint.NEW_POST);
 
