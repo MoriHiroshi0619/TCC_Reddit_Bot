@@ -8,7 +8,7 @@
   <li>implementar JPA</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
-<ul>
+</ul>
   
 <h2>&#128276; Lembrete interessante</h2>
-<p> aparentemente se você realizar muita requests em um curto periodo de tempo, o reddit irá bloquear suas requests por 3 segundos <br> uma possivel forma de continuar realizando mais requests e settar um timeout de 3s + mudar o user-agent<p>
+<p> aparentemente se você realizar muita requests em um curto periodo de tempo, o reddit irá bloquear suas requests por 3 segundos <br> uma possivel forma de continuar realizando mais requests e settar um timeout de 3s + mudar o user-agent</p>
