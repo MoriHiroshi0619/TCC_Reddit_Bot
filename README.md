@@ -1,4 +1,4 @@
-<h1>&#128679; Por hora esse read me funcionará como uma lista <i>to do</i> </h1>
+<h1>&#128679; Por hora esse <i>read me</i> funcionará como uma lista <i>to do</i> </h1>
 
 <h2>&#128203; lista</h2>
 
