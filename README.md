@@ -1,6 +1,6 @@
-<h1>&#128679; Por hora esse read me funcionará como uma lista to do <br> (coisas a fazer)</h1>
+<h1>&#128679; Por hora esse read me funcionará como uma lista <i>to do</i> </h1>
 
-<h2>lista a fazer</h2>
+<h2>&#128203; lista</h2>
 
 <ul>
   <li>arrumar hora recebida para o modelo d/m/Y h:i:s</li>
@@ -11,4 +11,4 @@
 </ul>
   
 <h2>&#128276; Lembrete interessante</h2>
-<p> aparentemente se você realizar muita requests em um curto periodo de tempo, o reddit irá bloquear suas requests por 3 segundos <br> uma possivel forma de continuar realizando mais requests e settar um timeout de 3s + mudar o user-agent</p>
+<p> aparentemente se você realizar muita requests em um curto periodo de tempo, o reddit irá bloquear suas requests <br> Uma possivel forma de continuar realizando mais requests e settar um timeout de 3s + mudar o user-agent + esperar por 3 segundos para retomar o bot</p>
