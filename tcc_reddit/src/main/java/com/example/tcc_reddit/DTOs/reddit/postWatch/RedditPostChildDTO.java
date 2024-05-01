@@ -1,15 +1,14 @@
-package com.example.tcc_reddit.DTOs.reddit.posts;
+package com.example.tcc_reddit.DTOs.reddit.postWatch;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RedditPostDTO {
+public class RedditPostChildDTO {
     private String kind;
-    private RedditPostDataDTO data;
+    private RedditPostDataDetailsDTO data;
 
 }
