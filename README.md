@@ -1,5 +1,6 @@
-<h1>Por hora esse read me funcionará como uma lista to do (coisas a fazer)</h1>
+<h1>Por hora esse read me funcionará como uma lista to do <br> (coisas a fazer)</h1>
 
+<h2>lista a fazer</h2>
 - arrumar hora recebida para o modelo d/m/Y h:i:s
 - implementar leitura de comentarios em posts 
 - implementar JPA
