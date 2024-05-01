@@ -1,7 +1,8 @@
 package com.example.tcc_reddit.controller.reddit;
 
 import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
-import com.example.tcc_reddit.DTOs.reddit.posts.RedditPostDTO;
+import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
+import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -83,20 +84,21 @@ public class RedditApiController extends BaseRedditController {
         }
     }
 
+    //@todo quando for implementado o front-end e se der tempo eu implemento uma interface interativa para esse metodo
     @PostMapping("submit-new-post")
-    public Object newPostToSubreddit() throws RedditApiException{
+    public RedditPostSubmitDTO newPostToSubreddit() throws RedditApiException{
         String url = getEndpoint(RedditEndpoint.NEW_POST);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("sr", "r/developerPeroNoMucho");
-        body.add("title", "Primeira Postagem via código");
-        body.add("text", "Olá mundo, essa é minha primeira postagem no reddit feita via java + spring");
+        body.add("title", "Segundo Teste");
+        body.add("text", "Dessa vez a postagem é para testar o DTO");
         body.add("kind", "self");
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, this.header);
 
         try{
-            ResponseEntity<Object> response = this.restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
+            ResponseEntity<RedditPostSubmitDTO> response = this.restTemplate.exchange(url, HttpMethod.POST, requestEntity, RedditPostSubmitDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
