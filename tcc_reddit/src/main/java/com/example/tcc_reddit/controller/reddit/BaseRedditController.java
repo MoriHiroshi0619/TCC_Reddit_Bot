@@ -10,13 +10,14 @@ abstract public class BaseRedditController {
 
     public BaseRedditController(Credentials credentials){
         this.baseUrl = "https://oauth.reddit.com/";
-        this.userAgent = "tccBot";
+        this.userAgent = "TCC universitário";
         accesstoken = credentials.getAccessToken();
     }
 
     enum RedditEndpoint {
         KARMA("/api/v1/me/karma"),
-        SUBREDDIT_NEW("/r/{subreddit}/new");
+        SUBREDDIT_NEW("/r/{subreddit}/new"),
+        NEW_POST("/api/submit");
         private final String path;
 
         RedditEndpoint(String path) {
@@ -41,7 +42,6 @@ abstract public class BaseRedditController {
     protected String getUserAgent()
     {
         return this.userAgent;
-
     }
 
     protected String getEndpoint(RedditEndpoint endpoint)
@@ -52,7 +52,4 @@ abstract public class BaseRedditController {
     protected String getEndpointPathWithSubreddit(RedditEndpoint endpoint, String subreddit) {
         return baseUrl + endpoint.getPathWithSubreddit(subreddit);
     }
-
-
-
 }

@@ -5,10 +5,9 @@ import com.example.tcc_reddit.DTOs.reddit.posts.RedditPostDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -63,7 +62,7 @@ public class RedditApiController extends BaseRedditController {
     @GetMapping("/new-posts-from/{subreddit}")
     public RedditPostDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
         //Os paremetros para essa requisição vão direto na url, não no body...
-        String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit + "?limit=1");
+        String url = getEndpointPathWithSubreddit(RedditEndpoint.SUBREDDIT_NEW, subreddit);
 
         HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
@@ -83,4 +82,50 @@ public class RedditApiController extends BaseRedditController {
             throw new RedditApiException("Error: " + e.getMessage());
         }
     }
+
+    @PostMapping("submit-new-post")
+    public Object newPostToSubreddit() throws RedditApiException{
+        String url = getEndpoint(RedditEndpoint.NEW_POST);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("sr", "r/developerPeroNoMucho");
+        body.add("title", "Primeira Postagem via código");
+        body.add("text", "Olá mundo, essa é minha primeira postagem no reddit feita via java + spring");
+        body.add("kind", "self");
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, this.header);
+
+        try{
+            ResponseEntity<Object> response = this.restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
+
+            if(response.getStatusCode() == HttpStatus.OK){
+                return response.getBody();
+            }else{
+                return null;
+            }
+        }catch(HttpClientErrorException e){
+            throw new RedditApiException("Erro do cliente: " + e.getMessage());
+        }catch (HttpServerErrorException e){
+            throw new RedditApiException("Erro do servidor: " + e.getMessage());
+        }catch (Exception e){
+            throw new RedditApiException("Error: " + e.getMessage());
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
