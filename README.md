@@ -14,7 +14,7 @@
 <h2>&#128276; Lembretes </h2>
 <p> aparentemente se você realizar muita requests em um curto periodo de tempo, o reddit irá bloquear suas requests <br> Uma possivel forma de continuar realizando mais requests e settar um timeout de 3s + mudar o user-agent + esperar por 3 segundos para retomar o bot</p>
 
-<h2>&#128391; Links</h2>
+<h2>&#128279; Links</h2>
 
 <ul>
   <li>
