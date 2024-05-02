@@ -18,7 +18,7 @@ abstract public class BaseRedditController {
         KARMA("/api/v1/me/karma"),
         SUBREDDIT_NEW("/r/{param}/new"),
         NEW_POST("/api/submit"),
-        POST_COMENTS("/comments/{param}");
+        READ_POST_COMENTS("/comments/{param}");
         private final String path;
 
         RedditEndpoint(String path) {

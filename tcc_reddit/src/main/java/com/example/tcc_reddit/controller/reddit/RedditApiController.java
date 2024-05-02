@@ -90,7 +90,7 @@ public class RedditApiController extends BaseRedditController {
 
     @GetMapping("/comments-from-a-post/{postID}")
     public Object getCommentsFromAPost(@PathVariable("postID") String postID) throws RedditApiException{
-        String url = getEndpointPathWithParam(RedditEndpoint.POST_COMENTS, postID);
+        String url = getEndpointPathWithParam(RedditEndpoint.READ_POST_COMENTS, postID);
         HttpEntity<String> header = new HttpEntity<>(this.header);
 
         try{
