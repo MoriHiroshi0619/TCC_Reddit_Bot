@@ -16,6 +16,10 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
+    //@todo vai ter que refatorar todo dos DTO.
+    //@todo criar uma interface para para os DTO implementar
+    //@todo aplicar inversão de depedencia ao DTO...
+
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
     @Autowired
