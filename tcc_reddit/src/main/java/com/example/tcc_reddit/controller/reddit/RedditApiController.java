@@ -5,6 +5,7 @@ import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
 import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/reddit-api")
@@ -92,12 +95,13 @@ public class RedditApiController extends BaseRedditController {
     }
 
     @GetMapping("/comments-from-a-post/{postID}")
-    public Object getCommentsFromAPost(@PathVariable("postID") String postID) throws RedditApiException{
+    public List<RedditListingDTO> getCommentsFromAPost(@PathVariable("postID") String postID) throws RedditApiException{
         String url = getEndpointPathWithParam(RedditEndpoint.READ_POST_COMENTS, postID);
         HttpEntity<String> header = new HttpEntity<>(this.header);
 
         try{
-            ResponseEntity<Object> response = this.restTemplate.exchange(url, HttpMethod.GET, header, Object.class);
+            ResponseEntity<List<RedditListingDTO>> response = this.restTemplate.exchange(url, HttpMethod.GET, header, new ParameterizedTypeReference<List<RedditListingDTO>>() {
+            });
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();
