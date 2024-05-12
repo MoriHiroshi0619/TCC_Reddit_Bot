@@ -1,6 +1,9 @@
 package com.example.tcc_reddit.controller.reddit;
 
 import com.example.tcc_reddit.credentials.Credentials;
+import org.springframework.stereotype.Component;
+
+@Component
 
 abstract public class BaseRedditController {
     private final String baseUrl;
