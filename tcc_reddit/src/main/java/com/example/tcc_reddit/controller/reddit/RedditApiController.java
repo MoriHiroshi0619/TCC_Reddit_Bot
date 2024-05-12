@@ -1,8 +1,8 @@
 package com.example.tcc_reddit.controller.reddit;
 
+import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
 import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
 import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
-import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
 import com.example.tcc_reddit.credentials.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -17,8 +17,6 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
     //@todo vai ter que refatorar todo dos DTO.
-    //@todo criar uma interface para para os DTO implementar
-    //@todo aplicar inversão de depedencia ao DTO...
 
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
@@ -30,6 +28,11 @@ public class RedditApiController extends BaseRedditController {
         this.header = new HttpHeaders();
         this.header.set("User-Agent", getUserAgent());
         this.header.set("Authorization", getAccesstoken());
+    }
+
+    @GetMapping("/teste")
+    public String teste(){
+        return "Hello world";
     }
 
     @GetMapping("/accessToken")
@@ -65,14 +68,14 @@ public class RedditApiController extends BaseRedditController {
     }
 
     @GetMapping("/new-posts-from/{subreddit}")
-    public RedditPostDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
+    public RedditListingDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
         //Os paremetros para essa requisição vão direto na url, não no body...
         String url = getEndpointPathWithParam(RedditEndpoint.SUBREDDIT_NEW, subreddit);
 
         HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
         try{
-            ResponseEntity<RedditPostDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditPostDTO.class);
+            ResponseEntity<RedditListingDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditListingDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
                 return response.getBody();

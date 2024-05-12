@@ -3,9 +3,11 @@ package com.example.tcc_reddit.DTOs.reddit;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@Component
 public class AccessTokenDTO {
 
     @JsonProperty("access_token")
