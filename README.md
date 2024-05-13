@@ -24,4 +24,8 @@
     &#128196;
     <a href="https://www.reddit.com/dev/api/" target="_blank">Documentação da API do Reddit</a>
   </li>
+  <li>
+    &#128193;
+    <a href="https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki" target="_blank">WIKI da API do Reddit</a>
+  </li>
 </ul>
