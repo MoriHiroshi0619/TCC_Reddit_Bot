@@ -32,21 +32,16 @@ public class RedditCommentDataDTO {
     private String permalink;
     private float created;
     private int depth;
-    private RedditRepliesDTO replies;
 
-    private String repliesAsString;
-    private RedditRepliesDTO repliesAsObject;
+    private RedditListingDTO replie;
 
     @JsonSetter("replies")
     public void setReplies(JsonNode replies) {
         ObjectMapper mapper = new ObjectMapper();
-        if (replies.isTextual()) {
-            this.repliesAsString = replies.asText();
-        } else if (replies.isObject()) {
+         if (replies.isObject()) {
             try {
-                this.repliesAsObject = mapper.treeToValue(replies, RedditRepliesDTO.class);
+                this.replie = mapper.treeToValue(replies, RedditListingDTO.class);
             } catch (Exception e) {
-                // Trate a exceção adequadamente
                 e.printStackTrace();
             }
         }
