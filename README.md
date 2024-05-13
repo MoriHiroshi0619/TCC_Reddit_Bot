@@ -4,8 +4,6 @@
 
 <ul>
   <li>arrumar hora recebida para o modelo d/m/Y h:i:s (@JsonFormat)</li>
-  <li>implementar leitura de comentarios em posts </li>
-  <li>refatorar DTOs</li>
   <li>implementar JPA</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
