@@ -19,8 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
-    //@todo vai ter que refatorar todo dos DTO.
-
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
     @Autowired
