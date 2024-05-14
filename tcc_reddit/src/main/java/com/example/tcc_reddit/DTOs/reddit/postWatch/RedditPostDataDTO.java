@@ -1,6 +1,8 @@
 package com.example.tcc_reddit.DTOs.reddit.postWatch;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +16,6 @@ public class RedditPostDataDTO {
     private String author_fullname;
     private String author;
     private boolean saved;
-    /*private boolean edited;*/
     private boolean approved;
     private String approved_at_utc;
     private String approved_by;
@@ -29,4 +30,16 @@ public class RedditPostDataDTO {
     private String url;
     private boolean over_18;
     private String created_utc;
+    private boolean was_edited;
+    private float edited_at;
+
+    @JsonSetter("edited")
+    public void setEdited(JsonNode edited){
+        if(!edited.isBoolean()){
+            this.was_edited = true;
+            this.edited_at = (float) edited.asDouble();
+        }else{
+            this.was_edited = false;
+        }
+    }
 }

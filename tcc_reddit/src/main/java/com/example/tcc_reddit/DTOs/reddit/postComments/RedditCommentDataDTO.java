@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Component
 public class RedditCommentDataDTO {
+    //@todo corrigir o campo "edit", edit ? float : false
     private String subreddit_id;
     private String subreddit;
     private String id;
@@ -25,13 +26,14 @@ public class RedditCommentDataDTO {
     private int score;
     private String author_fullname;
     private String body;
-    private boolean edited;
     private String name;
     private int downs;
     private int ups;
     private String permalink;
     private float created;
     private int depth;
+    private boolean was_edited;
+    private float edited_at;
 
     private RedditListingDTO replie;
 
@@ -44,6 +46,16 @@ public class RedditCommentDataDTO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @JsonSetter("edited")
+    public void setEdited(JsonNode edited){
+        if(!edited.isBoolean()){
+            this.was_edited = true;
+            this.edited_at = (float) edited.asDouble();
+        }else{
+            this.was_edited = false;
         }
     }
 
