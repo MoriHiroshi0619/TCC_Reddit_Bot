@@ -21,6 +21,10 @@ import java.util.List;
 public class RedditApiController extends BaseRedditController {
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
+    private static String requests_remaing;
+    private static String requests_used;
+    private static String requests_reset;
+
     @Autowired
     public RedditApiController(Credentials credentials)
     {
@@ -55,6 +59,9 @@ public class RedditApiController extends BaseRedditController {
             ResponseEntity<KarmaDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, KarmaDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
+                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
+                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
+                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
                 return response.getBody();
             }else{
                 return null;
@@ -79,6 +86,9 @@ public class RedditApiController extends BaseRedditController {
             ResponseEntity<RedditListingDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditListingDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
+                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
+                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
+                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
                 return response.getBody();
             }else{
                 return null;
@@ -102,6 +112,9 @@ public class RedditApiController extends BaseRedditController {
             });
 
             if(response.getStatusCode() == HttpStatus.OK){
+                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
+                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
+                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
                 return response.getBody();
             }else{
                 return null;

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Component
 public class RedditPostDataDTO {
-    //@todo por algum motivo dependendo do que a API devolve esse formato pode dar errado... [EDITED]
     private String subreddit;
     private String selftext;
     private String author_fullname;
