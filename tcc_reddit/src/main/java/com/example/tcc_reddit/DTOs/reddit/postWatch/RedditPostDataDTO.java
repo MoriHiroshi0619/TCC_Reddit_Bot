@@ -37,16 +37,16 @@ public class RedditPostDataDTO {
     private boolean over_18;
     @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created_utc;
-    private boolean was_edited;
-    private float edited_at;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
+    private String edited_at;
 
     @JsonSetter("edited")
     public void setEdited(JsonNode edited){
         if(!edited.isBoolean()){
-            this.was_edited = true;
-            this.edited_at = (float) edited.asDouble();
-        }else{
-            this.was_edited = false;
+            long timestamp = edited.asLong();
+            Date date = new Date(timestamp * 1000);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.edited_at = formatter.format(date);
         }
     }
 }

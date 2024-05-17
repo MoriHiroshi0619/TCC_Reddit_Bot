@@ -1,5 +1,6 @@
 package com.example.tcc_reddit.DTOs.reddit.postComments;
 
+import com.example.tcc_reddit.DTOs.CustomUnixTimeDeserializer;
 import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
 import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
 import com.fasterxml.jackson.annotation.*;
@@ -9,6 +10,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 @Getter
@@ -20,7 +24,8 @@ public class RedditCommentDataDTO {
     private String subreddit;
     private String id;
     private String author;
-    private float created_utc;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
+    private String created_utc;
     private boolean send_replies;
     private String parent_id;
     private int score;
@@ -30,10 +35,10 @@ public class RedditCommentDataDTO {
     private int downs;
     private int ups;
     private String permalink;
-    private float created;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
+    private String created;
     private int depth;
-    private boolean was_edited;
-    private float edited_at;
+    private String edited_at;
 
     private RedditListingDTO replie;
 
@@ -52,11 +57,12 @@ public class RedditCommentDataDTO {
     @JsonSetter("edited")
     public void setEdited(JsonNode edited){
         if(!edited.isBoolean()){
-            this.was_edited = true;
-            this.edited_at = (float) edited.asDouble();
-        }else{
-            this.was_edited = false;
+            long timestamp = edited.asLong();
+            Date date = new Date(timestamp * 1000);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.edited_at = formatter.format(date);
         }
     }
+
 
 }
