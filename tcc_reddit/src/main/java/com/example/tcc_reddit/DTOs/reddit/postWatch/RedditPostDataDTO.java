@@ -1,10 +1,15 @@
 package com.example.tcc_reddit.DTOs.reddit.postWatch;
 
+import com.example.tcc_reddit.DTOs.CustomUnixTimeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,7 +28,10 @@ public class RedditPostDataDTO {
     private float upvote_ratio;
     private int ups;
     private int score;
-    private String created;
+
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
+    private Date created;
+
     private String id;
     private int num_comments;
     private String url;
