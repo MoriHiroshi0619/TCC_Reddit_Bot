@@ -21,6 +21,7 @@ public class RedditPostDataDTO {
     private String author;
     private boolean saved;
     private boolean approved;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String approved_at_utc;
     private String approved_by;
     private String subreddit_name_prefixed;
@@ -28,14 +29,13 @@ public class RedditPostDataDTO {
     private float upvote_ratio;
     private int ups;
     private int score;
-
     @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
-    private Date created;
-
+    private String created;
     private String id;
     private int num_comments;
     private String url;
     private boolean over_18;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created_utc;
     private boolean was_edited;
     private float edited_at;
