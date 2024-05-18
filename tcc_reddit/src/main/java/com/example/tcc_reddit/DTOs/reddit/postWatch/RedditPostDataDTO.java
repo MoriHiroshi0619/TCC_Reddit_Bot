@@ -1,22 +1,27 @@
 package com.example.tcc_reddit.DTOs.reddit.postWatch;
 
+import com.example.tcc_reddit.DTOs.CustomUnixTimeDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Component
 public class RedditPostDataDTO {
-    //@todo por algum motivo dependendo do que a API devolve esse formato pode dar errado... [EDITED]
     private String subreddit;
     private String selftext;
     private String author_fullname;
     private String author;
     private boolean saved;
     private boolean approved;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String approved_at_utc;
     private String approved_by;
     private String subreddit_name_prefixed;
@@ -24,22 +29,24 @@ public class RedditPostDataDTO {
     private float upvote_ratio;
     private int ups;
     private int score;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created;
     private String id;
     private int num_comments;
     private String url;
     private boolean over_18;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created_utc;
-    private boolean was_edited;
-    private float edited_at;
+    @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
+    private String edited_at;
 
     @JsonSetter("edited")
     public void setEdited(JsonNode edited){
         if(!edited.isBoolean()){
-            this.was_edited = true;
-            this.edited_at = (float) edited.asDouble();
-        }else{
-            this.was_edited = false;
+            long timestamp = edited.asLong();
+            Date date = new Date(timestamp * 1000);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.edited_at = formatter.format(date);
         }
     }
 }

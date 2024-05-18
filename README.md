@@ -28,4 +28,8 @@
     &#128193;
     <a href="https://support.reddithelp.com/hc/en-us/articles/16160319875092-Reddit-Data-API-Wiki" target="_blank">WIKI da API do Reddit</a>
   </li>
+  <li>
+    &#128394;
+    <a href="https://github.com/reddit-archive/reddit/wiki/JSON" target="_blank">API do Reddit JSON attributes types</a>
+  </li>
 </ul>
