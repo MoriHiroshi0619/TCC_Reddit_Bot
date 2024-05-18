@@ -2,13 +2,11 @@ package com.example.tcc_reddit.DTOs.reddit.postComments;
 
 import com.example.tcc_reddit.DTOs.CustomUnixTimeDeserializer;
 import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
-import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
