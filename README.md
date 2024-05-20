@@ -1,13 +1,11 @@
-<h1>&#128679;Esse <i>read me</i> funcionará como uma lista <i>to do</i> </h1>
+<h1>&#128679; Esse <i>read me</i> funcionará como uma lista <i>to do</i> </h1>
 
 <h2>&#128203; Lista</h2>
 
 <ul>
-  <li>arrumar hora recebida para o modelo d/m/Y h:i:s (@JsonFormat)</li>
   <li>implementar JPA</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
-  <li>salvar tbm o numero de requisições restantes do periodo</li>
 </ul>
   
 <h2>&#128276; Lembretes </h2>
