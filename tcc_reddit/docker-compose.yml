@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: tcc-reddit-app
+    ports:
+      - "8090:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tcc_reddit
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 160651
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: tcc_reddit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 160651

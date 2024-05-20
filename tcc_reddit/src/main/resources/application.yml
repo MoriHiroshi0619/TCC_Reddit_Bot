@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: tcc_reddit
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tcc_reddit
+    username: postgres
+    password: 160651
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+reddit:
+  client-id: kjRBkYEDD1fl01k1-FRbdQ
+  secret-id: 5IHe5NEMc_-HkWdCukFGJ7UdnZMEKw
+  username: Hiroshi0619
+  password: 7QQsFuBv@CknU7f

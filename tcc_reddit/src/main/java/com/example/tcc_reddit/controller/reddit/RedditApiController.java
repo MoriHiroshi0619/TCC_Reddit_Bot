@@ -37,7 +37,7 @@ public class RedditApiController extends BaseRedditController {
 
     @GetMapping("/teste")
     public String teste(){
-        return "Hello world";
+        return "Hello world [teste do docker porta 8090]";
     }
 
     @GetMapping("/accessToken")
