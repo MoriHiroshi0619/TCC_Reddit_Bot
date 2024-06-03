@@ -4,6 +4,8 @@
 
 <ul>
   <li>implementar JPA</li>
+  <li>Arrumar DTO do post para ccapturar os DOWNS</li>
+  <li>Arrumar os tipos de dados de model + inserir DOWNS</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
 </ul>
