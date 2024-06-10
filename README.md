@@ -4,8 +4,8 @@
 
 <ul>
   <li>implementar JPA</li>
-  <li>Arrumar DTO do post para ccapturar os DOWNS</li>
-  <li>Arrumar os tipos de dados de model + inserir DOWNS</li>
+  <li>Gerar algoritmo randomico para atribuir coordenadas</li>
+  <li>Criar metodo para categorizar posts</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
 </ul>
