@@ -14,8 +14,8 @@ public class CustomUnixTimeDeserializer extends JsonDeserializer<String> {
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         long timestamp = p.getValueAsLong();
         Date date = new Date(timestamp * 1000);
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(date);
     }
 }

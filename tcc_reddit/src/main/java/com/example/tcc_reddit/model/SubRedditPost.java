@@ -21,8 +21,16 @@ public class SubRedditPost {
     @JoinColumn(name = "subreddit_id", referencedColumnName = "id")
     private SubReddit subreddit_id;
 
+    @ManyToOne
+    @JoinColumn(name = "municipio_id", referencedColumnName = "geocodigo")
+    private Municipio municipio_id;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", referencedColumnName = "id")
+    private Categoria categoria_id;
+
     private String selftext;
-    private String author_fullname;
+    private String author_id; //author_fullname do DTO
     private String author;
     private boolean saved;
     private boolean approved;
@@ -32,6 +40,7 @@ public class SubRedditPost {
     private String title;
     private float upvote_ratio;
     private int ups;
+    private int downs;
     private int score;
     private String created;
     private int num_comments;
@@ -40,14 +49,14 @@ public class SubRedditPost {
     private String created_utc;
     private String edited_at;
 
-    public SubRedditPost() {
-    }
+    //contrutor padrão
+    public SubRedditPost() {}
 
-    public SubRedditPost(String id, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, boolean approved, String approved_at_utc, String approved_by, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
+    public SubRedditPost(String id, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, boolean approved, String approved_at_utc, String approved_by, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int downs, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
         this.id = id;
         this.subreddit_id = subreddit_id;
         this.selftext = selftext;
-        this.author_fullname = author_fullname;
+        this.author_id = author_fullname;
         this.author = author;
         this.saved = saved;
         this.approved = approved;
@@ -57,6 +66,7 @@ public class SubRedditPost {
         this.title = title;
         this.upvote_ratio = upvote_ratio;
         this.ups = ups;
+        this.downs = downs;
         this.score = score;
         this.created = created;
         this.num_comments = num_comments;

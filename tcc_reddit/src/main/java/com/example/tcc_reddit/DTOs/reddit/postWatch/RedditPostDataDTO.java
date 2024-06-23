@@ -17,9 +17,12 @@ import java.util.Date;
 @Component
 public class RedditPostDataDTO {
     private String subreddit;
+
     @JsonDeserialize (using = CustomRedditKindEntiryIdDeserializer.class)
     private String subreddit_id;
     private String selftext;
+
+    @JsonDeserialize (using = CustomRedditKindEntiryIdDeserializer.class)
     private String author_fullname;
     private String author;
     private boolean saved;
@@ -31,6 +34,7 @@ public class RedditPostDataDTO {
     private String title;
     private float upvote_ratio;
     private int ups;
+    private int downs;
     private int score;
     @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created;

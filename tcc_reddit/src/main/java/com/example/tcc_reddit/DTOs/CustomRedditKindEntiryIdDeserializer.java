@@ -10,10 +10,13 @@ import java.io.IOException;
 public class CustomRedditKindEntiryIdDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        String subredditId = p.getText();
-        if (subredditId.startsWith("t5_")) {
-            return subredditId.substring(3); // Remove "t?_"
+        String id = p.getText();
+        if (id.startsWith("t5_")) { // prefixo de subrredit's
+            return id.substring(3); // Remove "t?_"
         }
-        return subredditId; // Retorna o ID se não começar com "t?_"
+        if (id.startsWith("t2_")) { // prefixo de users
+            return id.substring(3); // Remove "t?_"
+        }
+        return id; // Retorna o ID se não começar com "t?_"
     }
 }

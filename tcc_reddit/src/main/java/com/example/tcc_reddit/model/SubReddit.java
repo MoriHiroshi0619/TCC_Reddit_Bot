@@ -17,9 +17,7 @@ public class SubReddit{
     private String id;
     private String subredditName;
 
-    public SubReddit() {
-
-    }
+    public SubReddit() {}
     public SubReddit(String id, String subredditName) {
         this.id = id;
         this.subredditName = subredditName;
