@@ -3,7 +3,6 @@
 <h2>&#128203; Lista</h2>
 
 <ul>
-  <li>implementar JPA</li>
   <li>Gerar algoritmo randomico para atribuir coordenadas</li>
   <li>Criar metodo para categorizar posts</li>
   <li>implementar services</li>
