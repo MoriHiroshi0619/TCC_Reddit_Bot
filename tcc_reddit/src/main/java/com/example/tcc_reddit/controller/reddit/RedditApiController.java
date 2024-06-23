@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/reddit-api")
 public class RedditApiController extends BaseRedditController {
+
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
     private static String requests_remaing;

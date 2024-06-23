@@ -6,16 +6,17 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-public class CustomUnixTimeDeserializer extends JsonDeserializer<String> {
+public class CustomRedditKindEntiryIdDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        long timestamp = p.getValueAsLong();
-        Date date = new Date(timestamp * 1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return formatter.format(date);
+        String id = p.getText();
+        if (id.startsWith("t5_")) { // prefixo de subrredit's
+            return id.substring(3); // Remove "t?_"
+        }
+        if (id.startsWith("t2_")) { // prefixo de users
+            return id.substring(3); // Remove "t?_"
+        }
+        return id; // Retorna o ID se não começar com "t?_"
     }
 }
