@@ -1,5 +1,6 @@
 package com.example.tcc_reddit.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 public class SubReddit{
     @Id
     private String id;
+    @Column(nullable = false)
     private String subredditName;
 
     public SubReddit() {}

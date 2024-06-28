@@ -1,12 +1,11 @@
 package com.example.tcc_reddit.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,28 +24,46 @@ public class SubRedditPost {
     @JoinColumn(name = "municipio_id", referencedColumnName = "geocodigo")
     private Municipio municipio_id;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", referencedColumnName = "id")
-    private Categoria categoria_id;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SubredditPostCategoria> categorias = new HashSet<>();
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String selftext;
+    @Column(nullable = false)
     private String author_id; //author_fullname do DTO
+    @Column(nullable = false)
     private String author;
+    @Column(nullable = true)
     private boolean saved;
+    @Column(nullable = true)
     private boolean approved;
+    @Column(nullable = true)
     private String approved_at_utc;
+    @Column(nullable = true)
     private String approved_by;
+    @Column(nullable = true)
     private String subreddit_name_prefixed;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = true)
     private float upvote_ratio;
+    @Column(nullable = true)
     private int ups;
+    @Column(nullable = true)
     private int downs;
+    @Column(nullable = true)
     private int score;
+    @Column(nullable = true)
     private String created;
+    @Column(nullable = true)
     private int num_comments;
+    @Column(nullable = true)
     private String url;
+    @Column(nullable = true)
     private boolean over_18;
+    @Column(nullable = true)
     private String created_utc;
+    @Column(nullable = true)
     private String edited_at;
 
     //contrutor padrão
