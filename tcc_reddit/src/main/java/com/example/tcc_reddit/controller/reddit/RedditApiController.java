@@ -4,6 +4,7 @@ import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
 import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
 import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
 import com.example.tcc_reddit.credentials.Credentials;
+import com.example.tcc_reddit.service.RedditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -13,23 +14,28 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/reddit-api")
-public class RedditApiController extends BaseRedditController {
+public class RedditApiController extends BaseReddit {
 
+    private final RedditService service;
     private final RestTemplate restTemplate;
     private final HttpHeaders header;
-    private static String requests_remaing;
-    private static String requests_used;
-    private static String requests_reset;
+
+    private volatile boolean streamingActive = true;
+
+    private Thread streamingThread;
+
 
     @Autowired
-    public RedditApiController(Credentials credentials)
+    public RedditApiController(Credentials credentials, RedditService service)
     {
         super(credentials);
+        this.service = service;
         this.restTemplate = new RestTemplate();
         this.header = new HttpHeaders();
         this.header.set("User-Agent", getUserAgent());
@@ -60,9 +66,6 @@ public class RedditApiController extends BaseRedditController {
             ResponseEntity<KarmaDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, KarmaDTO.class);
 
             if(response.getStatusCode() == HttpStatus.OK){
-                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
-                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
-                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
                 return response.getBody();
             }else{
                 return null;
@@ -76,32 +79,52 @@ public class RedditApiController extends BaseRedditController {
         }
     }
 
-    @GetMapping("/new-posts-from/{subreddit}")
-    public RedditListingDTO getNewPostsFromSubreddit (@PathVariable("subreddit") String subreddit) throws RedditApiException{
-        //Os paremetros para essa requisição vão direto na url, não no body...
-        String url = getEndpointPathWithParam(RedditEndpoint.SUBREDDIT_NEW, subreddit);
+    @GetMapping("/posts-from/{subreddit}")
+    public RedditListingDTO getPostsFromSubreddit(
+            @PathVariable("subreddit") String subreddit,
+            @RequestParam(value = "after", required = false) String after,
+            @RequestParam(value = "before", required = false) String before,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "sort", required = false, defaultValue = "new") String sort) throws RedditApiException {
+
+        String url = getEndpointPathWithParam(RedditEndpoint.SUBREDDIT, subreddit);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("sort", sort);
+
+        if (after != null && !after.isEmpty()) {
+            uriBuilder.queryParam("after", after);
+        }
+        if (before != null && !before.isEmpty()) {
+            uriBuilder.queryParam("before", before);
+        }
+        if (limit != null) {
+            uriBuilder.queryParam("limit", limit);
+        }
+
+        String finalUrl = uriBuilder.toUriString();
+
+        System.out.println(finalUrl);
 
         HttpEntity<String> headerEntity = new HttpEntity<>(this.header);
 
-        try{
-            ResponseEntity<RedditListingDTO> response = this.restTemplate.exchange(url, HttpMethod.GET, headerEntity, RedditListingDTO.class);
+        try {
+            ResponseEntity<RedditListingDTO> response = this.restTemplate.exchange(finalUrl, HttpMethod.GET, headerEntity, RedditListingDTO.class);
 
-            if(response.getStatusCode() == HttpStatus.OK){
-                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
-                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
-                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
+            if (response.getStatusCode() == HttpStatus.OK) {
                 return response.getBody();
-            }else{
+            } else {
                 return null;
             }
-        }catch(HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             throw new RedditApiException("Erro do cliente: " + e.getMessage());
-        }catch (HttpServerErrorException e){
+        } catch (HttpServerErrorException e) {
             throw new RedditApiException("Erro do servidor: " + e.getMessage());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RedditApiException("Error: " + e.getMessage());
         }
     }
+
 
     @GetMapping("/comments-from-a-post/{postID}")
     public List<RedditListingDTO> getCommentsFromAPost(@PathVariable("postID") String postID) throws RedditApiException{
@@ -113,9 +136,6 @@ public class RedditApiController extends BaseRedditController {
             });
 
             if(response.getStatusCode() == HttpStatus.OK){
-                requests_remaing = response.getHeaders().get("x-ratelimit-remaining").get(0);
-                requests_used = response.getHeaders().get("x-ratelimit-used").get(0);
-                requests_reset = response.getHeaders().get("x-ratelimit-reset").get(0);
                 return response.getBody();
             }else{
                 return null;
@@ -130,7 +150,6 @@ public class RedditApiController extends BaseRedditController {
         }
     }
 
-    //@todo quando for implementado o front-end e se der tempo eu implemento uma interface interativa para esse metodo
     @PostMapping("/submit-new-post")
     public RedditPostSubmitDTO newPostToSubreddit() throws RedditApiException{
         String url = getEndpoint(RedditEndpoint.NEW_POST);
@@ -157,6 +176,44 @@ public class RedditApiController extends BaseRedditController {
             throw new RedditApiException("Erro do servidor: " + e.getMessage());
         }catch (Exception e){
             throw new RedditApiException("Error: " + e.getMessage());
+        }
+    }
+
+
+
+    @GetMapping("/start-stream-subreddit/{subreddit}")
+    public ResponseEntity<String> streamSubreddit(@PathVariable("subreddit") String subreddit) {
+        try {
+            //todo verificar se já tem ou não um tread ativo antes de ativar.
+            this.streamingActive = true;
+            this.streamingThread = new Thread(() -> {
+                try {
+                    while (streamingActive) {
+                        this.service.streamSubredditPosts(subreddit);
+                    }
+                } catch (RedditApiException e) {
+                    e.printStackTrace();
+                }
+            });
+            this.streamingThread.start();
+            return ResponseEntity.ok("Streaming started for subreddit: " + subreddit);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error starting streaming: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/stop-stream")
+    public ResponseEntity<String> stopStreamSubreddit() {
+        try {
+            if (this.streamingThread != null && this.streamingThread.isAlive()) {
+                streamingActive = false;
+                this.streamingThread.interrupt();
+                return ResponseEntity.ok("Streaming stopped");
+            } else {
+                return ResponseEntity.ok("No active streaming");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error stopping streaming: " + e.getMessage());
         }
     }
 }

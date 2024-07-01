@@ -16,13 +16,22 @@ import java.io.Serializable;
 public class SubReddit{
     @Id
     private String id;
+
     @Column(nullable = false)
-    private String subredditName;
+    private String subRedditName;
+
+    @Column(nullable = true)
+    private String after;
+
+    @Column(nullable = true)
+    private String before;
+
+
 
     public SubReddit() {}
-    public SubReddit(String id, String subredditName) {
+    public SubReddit(String id, String subRedditName) {
         this.id = id;
-        this.subredditName = subredditName;
+        this.subRedditName = subRedditName;
     }
 
 }

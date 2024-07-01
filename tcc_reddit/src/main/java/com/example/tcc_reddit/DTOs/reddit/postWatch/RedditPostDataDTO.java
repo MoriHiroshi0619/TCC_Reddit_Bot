@@ -38,6 +38,7 @@ public class RedditPostDataDTO {
     private int score;
     @JsonDeserialize( using = CustomUnixTimeDeserializer.class)
     private String created;
+    private String name;
     private String id;
     private int num_comments;
     private String url;

@@ -27,6 +27,8 @@ public class SubRedditPost {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubredditPostCategoria> categorias = new HashSet<>();
 
+    @Column(nullable = false)
+    private String name;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String selftext;
     @Column(nullable = false)

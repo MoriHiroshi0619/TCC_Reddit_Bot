@@ -10,24 +10,23 @@ import java.util.*;
 
 @Service
 public class CategoriaService {
-    //todo Não salvar em lowerCase as categoria no banco
-    private final CategoriaRepository categoriaRepository;
-    private List<String> categoriasPredefinidas;
+    protected final CategoriaRepository repository;
+    protected List<String> categoriasPredefinidas;
 
     @Autowired
-    public CategoriaService(CategoriaRepository categoriaRepository) {
-        this.categoriaRepository = categoriaRepository;
+    public CategoriaService(CategoriaRepository repository) {
+        this.repository = repository;
     }
 
 
     public void categoriasPredefinidasRefresh() {
         this.categoriasPredefinidas = new ArrayList<>();
-        categoriaRepository.findAll().forEach(categoria -> this.categoriasPredefinidas.add(categoria.getNome()));
+        this.repository.findAll().forEach(categoria -> this.categoriasPredefinidas.add(categoria.getNome()));
     }
 
     public Optional<Categoria> getById(int id){
         try{
-            Optional<Categoria> categoria = this.categoriaRepository.findById(id);
+            Optional<Categoria> categoria = this.repository.findById(id);
             if(categoria.isPresent()){
                 categoria.get();
                 return categoria;
@@ -45,7 +44,7 @@ public class CategoriaService {
         }
 
         try {
-            if (categoriaRepository.findFirstByNome(nome.trim()).isPresent()) {
+            if (this.repository.findFirstByNome(nome.trim()).isPresent()) {
                 throw new IllegalArgumentException("Uma categoria com esse nome já existe.");
             }
 
@@ -55,7 +54,7 @@ public class CategoriaService {
                 categoria.setDescricao(descricao.trim());
             }
 
-            return categoriaRepository.save(categoria);
+            return this.repository.save(categoria);
 
         }catch (IllegalArgumentException e){
             throw new RuntimeException("Argumentos inválidos: " + e.getMessage());
@@ -67,10 +66,10 @@ public class CategoriaService {
 
     public Optional<Categoria> delete(int id){
         try{
-            Optional<Categoria> categoria = this.categoriaRepository.findById(id);
+            Optional<Categoria> categoria = this.repository.findById(id);
             if(categoria.isPresent()){
                 categoria.get();
-                this.categoriaRepository.deleteById(id);
+                this.repository.deleteById(id);
                 return categoria;
             }else{
                 throw new IllegalArgumentException("Não foi possivel encontrar categoria com esse id");
@@ -110,7 +109,7 @@ public class CategoriaService {
 
         List<Map<String, Object>> resultado = new ArrayList<>();
         if (!categoriaPesos.isEmpty()) {
-            List<Categoria> categorias = categoriaRepository.findByNomeIn(new ArrayList<>(categoriaPesos.keySet()));
+            List<Categoria> categorias = this.repository.findByNomeIn(new ArrayList<>(categoriaPesos.keySet()));
             for (Categoria categoria : categorias) {
                 Map<String, Object> categoriaInfo = new HashMap<>();
                 categoriaInfo.put("id_categoria", categoria.getId());
