@@ -4,7 +4,7 @@
 
 <ul>
   <li>Gerar algoritmo randomico para atribuir coordenadas</li>
-  <li>Criar metodo para categorizar posts</li>
+  <li>Atribuir castegoria durante o stream de Posts</li>
   <li>implementar services</li>
   <li>implementar front-end</li>
 </ul>
