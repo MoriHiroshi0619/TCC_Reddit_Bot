@@ -33,7 +33,7 @@ public class CategoriaService {
             }
             return Optional.empty();
         }catch (Exception e){
-            throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
+            throw new RuntimeException("Erro ao recuperar a categoria: " + e.getMessage());
         }
     }
 

@@ -1,9 +1,6 @@
 package com.example.tcc_reddit.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +14,7 @@ public class SubReddit{
     @Id
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String subRedditName;
 
     @Column(nullable = true)
@@ -26,12 +23,23 @@ public class SubReddit{
     @Column(nullable = true)
     private String before;
 
+    @Column(nullable = true)
+    private String title;
 
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String description;
 
     public SubReddit() {}
     public SubReddit(String id, String subRedditName) {
         this.id = id;
         this.subRedditName = subRedditName;
+    }
+
+    public SubReddit(String id, String subRedditName, String title, String description) {
+        this.id = id;
+        this.subRedditName = subRedditName;
+        this.title = title;
+        this.description = description;
     }
 
 }

@@ -21,9 +21,10 @@ abstract public class BaseReddit {
     @Getter
     protected enum RedditEndpoint {
         KARMA("/api/v1/me/karma"),
-        SUBREDDIT("/r/{param}/"),
+        SUBREDDIT("r/{param}/about.json"),
+        FETCH_SUBREDDIT_POSTS("/r/{param}/"),
         NEW_POST("/api/submit"),
-        READ_POST_COMENTS("/comments/{param}");
+        FETCH_POST_COMENTS("/comments/{param}");
         private final String path;
 
         RedditEndpoint(String path) {

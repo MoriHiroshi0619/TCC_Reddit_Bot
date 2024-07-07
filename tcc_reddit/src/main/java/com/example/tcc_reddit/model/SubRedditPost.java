@@ -31,9 +31,9 @@ public class SubRedditPost {
     private String name;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String selftext;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author_id; //author_fullname do DTO
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author;
     @Column(nullable = true)
     private boolean saved;
