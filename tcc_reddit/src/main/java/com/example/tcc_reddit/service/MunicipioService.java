@@ -18,8 +18,12 @@ import java.util.Optional;
 @Service
 public class MunicipioService {
 
-    @Autowired
-    private MunicipioRepository municipioRepository;
+
+    private final MunicipioRepository repository;
+
+    public MunicipioService(MunicipioRepository repository) {
+        this.repository = repository;
+    }
 
     @Transactional
     public void importarMunicipiosDoExcel(String caminhoDoArquivo) throws IOException {
@@ -68,7 +72,7 @@ public class MunicipioService {
                 latitude = latitudeCell.getStringCellValue();
             }
 
-            Optional<Municipio> existingMunicipio = municipioRepository.findById(geoCodigo);
+            Optional<Municipio> existingMunicipio = this.repository.findById(geoCodigo);
             Municipio municipio;
             if (existingMunicipio.isPresent()) {
                 municipio = existingMunicipio.get();
@@ -83,11 +87,18 @@ public class MunicipioService {
                 municipio.setLongitude(longitude);
             }
 
-            municipioRepository.save(municipio);
+            this.repository.save(municipio);
         }
 
         workbook.close();
         file.close();
     }
 
+    public Municipio getRandomMunicipio() {
+        try {
+            return this.repository.getRandomMunicipio();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao recuperar Municipio randomico: " + e.getMessage());
+        }
+    }
 }

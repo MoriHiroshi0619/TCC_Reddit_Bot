@@ -9,6 +9,7 @@ import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
 import com.example.tcc_reddit.model.*;
 import com.example.tcc_reddit.repository.SubRedditPostRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -29,15 +30,21 @@ import java.util.Optional;
 public class SubRedditPostService extends BaseReddit {
 
     protected final SubRedditPostRepository repository;
-    protected final SubRedditService subRedditService;
-    protected final CategoriaService categoriaService;
-    protected final SubredditPostCategoriaServive subredditPostCategoriaServive;
-    public SubRedditPostService (Credentials credentials, SubRedditPostRepository repository, SubRedditService subRedditService, CategoriaService categoriaService, SubredditPostCategoriaServive subredditPostCategoriaServive){
+
+    @Autowired
+    protected SubRedditService subRedditService;
+
+    @Autowired
+    protected CategoriaService categoriaService;
+
+    @Autowired
+    protected SubredditPostCategoriaServive subredditPostCategoriaServive;
+
+    @Autowired
+    protected MunicipioService municipioService;
+    public SubRedditPostService (Credentials credentials, SubRedditPostRepository repository){
         super(credentials);
         this.repository = repository;
-        this.subRedditService = subRedditService;
-        this.categoriaService = categoriaService;
-        this.subredditPostCategoriaServive = subredditPostCategoriaServive;
     }
 
     public Map<String, Object>fetchPosts(String subreddit, String after, String before, Integer limit, String sort) throws RedditApiException {
@@ -88,51 +95,56 @@ public class SubRedditPostService extends BaseReddit {
         }
     }
 
+    @Transactional
     public void savePosts(RedditListingDTO posts, int pesoMinimo) {
         posts.getData().getChildren().forEach(post -> {
             if (post instanceof RedditPostDTO) {
-                RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
+                try{
+                    RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
 
-                SubRedditPost subRedditPost = new SubRedditPost();
-                subRedditPost.setId(postData.getId());
-                subRedditPost.setName(postData.getName());
-                subRedditPost.setSelftext(postData.getSelftext());
-                subRedditPost.setAuthor_id(postData.getAuthor_fullname());
-                subRedditPost.setAuthor(postData.getAuthor());
-                subRedditPost.setSaved(postData.isSaved());
-                subRedditPost.setApproved(postData.isApproved());
-                subRedditPost.setApproved_at_utc(postData.getApproved_at_utc());
-                subRedditPost.setApproved_by(postData.getApproved_by());
-                subRedditPost.setSubreddit_name_prefixed(postData.getSubreddit_name_prefixed());
-                subRedditPost.setTitle(postData.getTitle());
-                subRedditPost.setUpvote_ratio(postData.getUpvote_ratio());
-                subRedditPost.setUps(postData.getUps());
-                subRedditPost.setDowns(postData.getDowns());
-                subRedditPost.setScore(postData.getScore());
-                subRedditPost.setCreated(postData.getCreated());
-                subRedditPost.setNum_comments(postData.getNum_comments());
-                subRedditPost.setUrl(postData.getUrl());
-                subRedditPost.setOver_18(postData.isOver_18());
-                subRedditPost.setCreated_utc(postData.getCreated_utc());
-                subRedditPost.setEdited_at(postData.getEdited_at());
+                    SubRedditPost subRedditPost = new SubRedditPost();
+                    subRedditPost.setId(postData.getId());
+                    subRedditPost.setName(postData.getName());
+                    subRedditPost.setSelftext(postData.getSelftext());
+                    //subRedditPost.setSelftext("teste");
+                    subRedditPost.setAuthor_id(postData.getAuthor_fullname());
+                    subRedditPost.setAuthor(postData.getAuthor());
+                    subRedditPost.setSaved(postData.isSaved());
+                    subRedditPost.setApproved(postData.isApproved());
+                    subRedditPost.setApproved_at_utc(postData.getApproved_at_utc());
+                    subRedditPost.setApproved_by(postData.getApproved_by());
+                    subRedditPost.setSubreddit_name_prefixed(postData.getSubreddit_name_prefixed());
+                    subRedditPost.setTitle(postData.getTitle());
+                    subRedditPost.setUpvote_ratio(postData.getUpvote_ratio());
+                    subRedditPost.setUps(postData.getUps());
+                    subRedditPost.setDowns(postData.getDowns());
+                    subRedditPost.setScore(postData.getScore());
+                    subRedditPost.setCreated(postData.getCreated());
+                    subRedditPost.setNum_comments(postData.getNum_comments());
+                    subRedditPost.setUrl(postData.getUrl());
+                    subRedditPost.setOver_18(postData.isOver_18());
+                    subRedditPost.setCreated_utc(postData.getCreated_utc());
+                    subRedditPost.setEdited_at(postData.getEdited_at());
 
-                Optional<SubReddit> subreddit = this.subRedditService.getByid(postData.getSubreddit_id());
-                subreddit.ifPresent(subRedditPost::setSubreddit_id);
+                    Optional<SubReddit> subreddit = this.subRedditService.getByid(postData.getSubreddit_id());
+                    subreddit.ifPresent(subRedditPost::setSubreddit_id);
 
-                /*// Recupera ou cria o Município
-                Optional<Municipio> municipio = this.recuperarOuCriarMunicipio(postData.getSubreddit_id());
-                municipio.ifPresent(subRedditPost::setMunicipio_id); // Seta o municipio apenas se presente*/
+                    Municipio municipio = this.municipioService.getRandomMunicipio();
+                    subRedditPost.setMunicipio_id(municipio);
 
-                this.repository.save(subRedditPost);
+                    this.repository.save(subRedditPost);
 
-                List<Map<String, Object>> categorias = this.categoriaService.definirCategorias(postData.getTitle(), postData.getSelftext(), pesoMinimo);
-                categorias.forEach(categoria -> {
-                    int categoriaId = (int) categoria.get("id_categoria");
-                    int peso = (int) categoria.get("peso_postagem");
-                    Optional<Categoria> categoriaEntity = this.categoriaService.getById(categoriaId);
+                    List<Map<String, Object>> categorias = this.categoriaService.definirCategorias(postData.getTitle(), postData.getSelftext(), pesoMinimo);
+                    categorias.forEach(categoria -> {
+                        int categoriaId = (int) categoria.get("id_categoria");
+                        int peso = (int) categoria.get("peso_postagem");
+                        Optional<Categoria> categoriaEntity = this.categoriaService.getById(categoriaId);
 
-                    categoriaEntity.ifPresent(categoriaGet -> this.subredditPostCategoriaServive.store(categoriaGet, subRedditPost, peso));
-                });
+                        categoriaEntity.ifPresent(categoriaGet -> this.subredditPostCategoriaServive.store(categoriaGet, subRedditPost, peso));
+                    });
+                } catch (Exception e) {
+                    throw new RuntimeException("Erro ao tentar salvar post: " + e.getMessage() + post);
+                }
             }
         });
     }

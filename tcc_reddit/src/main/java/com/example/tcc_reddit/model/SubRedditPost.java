@@ -45,7 +45,7 @@ public class SubRedditPost {
     private String approved_by;
     @Column(nullable = true)
     private String subreddit_name_prefixed;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
     @Column(nullable = true)
     private float upvote_ratio;
@@ -59,7 +59,7 @@ public class SubRedditPost {
     private String created;
     @Column(nullable = true)
     private int num_comments;
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String url;
     @Column(nullable = true)
     private boolean over_18;
