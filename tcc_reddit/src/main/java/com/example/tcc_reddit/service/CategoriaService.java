@@ -80,15 +80,12 @@ public class CategoriaService {
             throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
         }
     }
-
-    @Transactional
-    public List<Map<String, Object>> definirCategorias(String titulo, String corpo) {
+    public List<Map<String, Object>> definirCategorias(String titulo, String corpo, int pesoMinimo) {
         Map<String, Integer> categoriaPesos = new HashMap<>();
 
         this.categoriasPredefinidasRefresh();
 
          //peso minimo pra atribuir uma postagem a uma categoria
-        int pesoNecessario = 3;
 
         for (String categoria : this.categoriasPredefinidas) {
             int peso = 0;
@@ -102,7 +99,7 @@ public class CategoriaService {
             int occurrences = getOcorrenciaDeCategoria(corpo.trim().toLowerCase(), categoria.toLowerCase());
             peso += occurrences * 3;
 
-            if (peso >= pesoNecessario) {
+            if (peso >= pesoMinimo) {
                 categoriaPesos.put(categoria, peso);
             }
         }

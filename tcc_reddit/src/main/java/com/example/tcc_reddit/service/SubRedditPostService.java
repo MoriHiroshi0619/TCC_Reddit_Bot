@@ -7,10 +7,9 @@ import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDataDTO;
 import com.example.tcc_reddit.controller.reddit.BaseReddit;
 import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
-import com.example.tcc_reddit.model.Municipio;
-import com.example.tcc_reddit.model.SubReddit;
-import com.example.tcc_reddit.model.SubRedditPost;
+import com.example.tcc_reddit.model.*;
 import com.example.tcc_reddit.repository.SubRedditPostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -30,12 +29,15 @@ import java.util.Optional;
 public class SubRedditPostService extends BaseReddit {
 
     protected final SubRedditPostRepository repository;
-
     protected final SubRedditService subRedditService;
-    public SubRedditPostService (Credentials credentials, SubRedditPostRepository repository, SubRedditService subRedditService){
+    protected final CategoriaService categoriaService;
+    protected final SubredditPostCategoriaServive subredditPostCategoriaServive;
+    public SubRedditPostService (Credentials credentials, SubRedditPostRepository repository, SubRedditService subRedditService, CategoriaService categoriaService, SubredditPostCategoriaServive subredditPostCategoriaServive){
         super(credentials);
         this.repository = repository;
         this.subRedditService = subRedditService;
+        this.categoriaService = categoriaService;
+        this.subredditPostCategoriaServive = subredditPostCategoriaServive;
     }
 
     public Map<String, Object>fetchPosts(String subreddit, String after, String before, Integer limit, String sort) throws RedditApiException {
@@ -86,7 +88,7 @@ public class SubRedditPostService extends BaseReddit {
         }
     }
 
-    public void savePosts(RedditListingDTO posts) {
+    public void savePosts(RedditListingDTO posts, int pesoMinimo) {
         posts.getData().getChildren().forEach(post -> {
             if (post instanceof RedditPostDTO) {
                 RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
@@ -114,7 +116,6 @@ public class SubRedditPostService extends BaseReddit {
                 subRedditPost.setCreated_utc(postData.getCreated_utc());
                 subRedditPost.setEdited_at(postData.getEdited_at());
 
-                // Recupera ou cria o SubReddit
                 Optional<SubReddit> subreddit = this.subRedditService.getByid(postData.getSubreddit_id());
                 subreddit.ifPresent(subRedditPost::setSubreddit_id);
 
@@ -123,6 +124,15 @@ public class SubRedditPostService extends BaseReddit {
                 municipio.ifPresent(subRedditPost::setMunicipio_id); // Seta o municipio apenas se presente*/
 
                 this.repository.save(subRedditPost);
+
+                List<Map<String, Object>> categorias = this.categoriaService.definirCategorias(postData.getTitle(), postData.getSelftext(), pesoMinimo);
+                categorias.forEach(categoria -> {
+                    int categoriaId = (int) categoria.get("id_categoria");
+                    int peso = (int) categoria.get("peso_postagem");
+                    Optional<Categoria> categoriaEntity = this.categoriaService.getById(categoriaId);
+
+                    categoriaEntity.ifPresent(categoriaGet -> this.subredditPostCategoriaServive.store(categoriaGet, subRedditPost, peso));
+                });
             }
         });
     }

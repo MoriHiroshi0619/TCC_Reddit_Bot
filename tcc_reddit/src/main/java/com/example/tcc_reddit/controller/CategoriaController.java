@@ -79,6 +79,6 @@ public class CategoriaController {
         //testar API
         String titulo = dados.getOrDefault("titulo", null);
         String corpo  = dados.getOrDefault("corpo", null);
-        return this.service.definirCategorias(titulo, corpo);
+        return this.service.definirCategorias(titulo, corpo, 9);
     }
 }

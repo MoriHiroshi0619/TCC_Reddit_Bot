@@ -53,12 +53,13 @@ public class RedditApiController extends BaseReddit {
             int limite = Integer.parseInt(dados.getOrDefault("limite", "50"));
             String sort = dados.getOrDefault("sort", "new");
             String before = dados.getOrDefault("before", null);
+            int peso = Integer.parseInt(dados.getOrDefault("before", "12"));
 
             this.streamingActive = true;
             this.streamingThread = new Thread(() -> {
                 try {
                     while (streamingActive) {
-                        this.service.streamSubredditPosts(subreddit, intervalo, before, limite, sort);
+                        this.service.streamSubredditPosts(subreddit, intervalo, before, limite, sort, peso);
                     }
                 } catch (RedditApiException e) {
                     e.printStackTrace();

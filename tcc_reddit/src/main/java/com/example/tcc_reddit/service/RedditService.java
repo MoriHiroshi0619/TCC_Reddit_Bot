@@ -2,26 +2,13 @@ package com.example.tcc_reddit.service;
 
 
 import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
-import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
-import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDataDTO;
 import com.example.tcc_reddit.DTOs.reddit.subReddit.SubRedditDTO;
 import com.example.tcc_reddit.controller.reddit.BaseReddit;
 import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
-import com.example.tcc_reddit.model.Municipio;
 import com.example.tcc_reddit.model.SubReddit;
-import com.example.tcc_reddit.model.SubRedditPost;
-import com.example.tcc_reddit.repository.MunicipioRepository;
-import com.example.tcc_reddit.repository.SubRedditPostRepository;
-import com.example.tcc_reddit.repository.SubRedditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +37,7 @@ public class RedditService extends BaseReddit {
 
     }
 
-    public void streamSubredditPosts(String subredditName, int intervalo, String before, int limite, String sort) throws RedditApiException {
+    public void streamSubredditPosts(String subredditName, int intervalo, String before, int limite, String sort, int peso) throws RedditApiException {
         Optional<SubReddit> subReddit = this.subRedditService.getBySubRedditName(subredditName);
         if(subReddit.isEmpty()){
             SubRedditDTO subRedditDTO = this.subRedditService.findSubReddit(subredditName);
@@ -65,7 +52,7 @@ public class RedditService extends BaseReddit {
             try {
                 Map<String, Object> resultado = this.subRedditPostService.fetchPosts(subredditName, subReddit.get().getAfter(), before, limite, sort);
                 RedditListingDTO posts = (RedditListingDTO) resultado.get("redditListinfDto");
-                this.subRedditPostService.savePosts(posts);
+                this.subRedditPostService.savePosts(posts, peso);
                 subReddit.get().setAfter(posts.getData().getAfter()); // Atualiza o 'after' para a próxima iteração
                 this.subRedditService.save(subReddit.get());
 
