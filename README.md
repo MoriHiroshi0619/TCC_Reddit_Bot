@@ -3,9 +3,7 @@
 <h2>&#128203; Lista</h2>
 
 <ul>
-  <li>Gerar algoritmo randomico para atribuir coordenadas</li>
-  <li>Atribuir castegoria durante o stream de Posts</li>
-  <li>implementar services</li>
+  <li>Arrumar Bug de stream que não salva no banco de dados após 850 itens</li>
   <li>implementar front-end</li>
 </ul>
   
