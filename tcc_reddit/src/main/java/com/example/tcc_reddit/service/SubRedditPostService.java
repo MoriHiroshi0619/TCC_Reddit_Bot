@@ -95,7 +95,6 @@ public class SubRedditPostService extends BaseReddit {
         }
     }
 
-    @Transactional
     public void savePosts(RedditListingDTO posts, int pesoMinimo) {
         posts.getData().getChildren().forEach(post -> {
             if (post instanceof RedditPostDTO) {
@@ -106,7 +105,6 @@ public class SubRedditPostService extends BaseReddit {
                     subRedditPost.setId(postData.getId());
                     subRedditPost.setName(postData.getName());
                     subRedditPost.setSelftext(postData.getSelftext());
-                    //subRedditPost.setSelftext("teste");
                     subRedditPost.setAuthor_id(postData.getAuthor_fullname());
                     subRedditPost.setAuthor(postData.getAuthor());
                     subRedditPost.setSaved(postData.isSaved());
