@@ -15,17 +15,17 @@ import java.util.Optional;
 @RestController
 public class CategoriaController {
 
-    private final CategoriaService categoriaService;
+    private final CategoriaService service;
 
     @Autowired
-    public CategoriaController(CategoriaService categoriaService) {
-        this.categoriaService = categoriaService;
+    public CategoriaController(CategoriaService service) {
+        this.service = service;
     }
 
     @GetMapping("categoria/{id}")
     public ResponseEntity<Map<String, Object>> getCategoriaById(@PathVariable int id){
         try{
-            Optional<Categoria> categoria = this.categoriaService.getById(id);
+            Optional<Categoria> categoria = this.service.getById(id);
             Map<String, Object> response = new HashMap<>();
             response.put("msg", "Sucesso ao recuperar categoria");
             response.put("categoria", categoria.get());
@@ -43,7 +43,7 @@ public class CategoriaController {
         String nome = dados.getOrDefault("nome", null);
         String descricao = dados.getOrDefault("descricao", "");
         try{
-            Categoria categoria = this.categoriaService.store(nome, descricao);
+            Categoria categoria = this.service.store(nome, descricao);
             Map<String, Object> response = new HashMap<>();
             response.put("msg", "Categoria criado com sucesso");
             response.put("categoria", categoria);
@@ -61,7 +61,7 @@ public class CategoriaController {
     @DeleteMapping("categoria/{id}")
     public ResponseEntity<Map<String, Object>> deleteCategoria(@PathVariable int id){
         try{
-            Optional<Categoria> categoriaDeletada = this.categoriaService.delete(id);
+            Optional<Categoria> categoriaDeletada = this.service.delete(id);
             Map<String, Object> response = new HashMap<>();
             response.put("msg", "categoria deletada com sucesso");
             response.put("categoria", categoriaDeletada);
@@ -79,6 +79,6 @@ public class CategoriaController {
         //testar API
         String titulo = dados.getOrDefault("titulo", null);
         String corpo  = dados.getOrDefault("corpo", null);
-        return this.categoriaService.definirCategorias(titulo, corpo);
+        return this.service.definirCategorias(titulo, corpo, 9);
     }
 }

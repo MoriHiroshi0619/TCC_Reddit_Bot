@@ -27,11 +27,13 @@ public class SubRedditPost {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubredditPostCategoria> categorias = new HashSet<>();
 
+    @Column(nullable = false)
+    private String name;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String selftext;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author_id; //author_fullname do DTO
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String author;
     @Column(nullable = true)
     private boolean saved;
@@ -43,7 +45,7 @@ public class SubRedditPost {
     private String approved_by;
     @Column(nullable = true)
     private String subreddit_name_prefixed;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
     @Column(nullable = true)
     private float upvote_ratio;
@@ -57,7 +59,7 @@ public class SubRedditPost {
     private String created;
     @Column(nullable = true)
     private int num_comments;
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String url;
     @Column(nullable = true)
     private boolean over_18;

@@ -10,31 +10,30 @@ import java.util.*;
 
 @Service
 public class CategoriaService {
-    //todo Não salvar em lowerCase as categoria no banco
-    private final CategoriaRepository categoriaRepository;
-    private List<String> categoriasPredefinidas;
+    protected final CategoriaRepository repository;
+    protected List<String> categoriasPredefinidas;
 
     @Autowired
-    public CategoriaService(CategoriaRepository categoriaRepository) {
-        this.categoriaRepository = categoriaRepository;
+    public CategoriaService(CategoriaRepository repository) {
+        this.repository = repository;
     }
 
 
     public void categoriasPredefinidasRefresh() {
         this.categoriasPredefinidas = new ArrayList<>();
-        categoriaRepository.findAll().forEach(categoria -> this.categoriasPredefinidas.add(categoria.getNome()));
+        this.repository.findAll().forEach(categoria -> this.categoriasPredefinidas.add(categoria.getNome()));
     }
 
     public Optional<Categoria> getById(int id){
         try{
-            Optional<Categoria> categoria = this.categoriaRepository.findById(id);
+            Optional<Categoria> categoria = this.repository.findById(id);
             if(categoria.isPresent()){
                 categoria.get();
                 return categoria;
             }
             return Optional.empty();
         }catch (Exception e){
-            throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
+            throw new RuntimeException("Erro ao recuperar a categoria: " + e.getMessage());
         }
     }
 
@@ -45,7 +44,7 @@ public class CategoriaService {
         }
 
         try {
-            if (categoriaRepository.findFirstByNome(nome.trim()).isPresent()) {
+            if (this.repository.findFirstByNome(nome.trim()).isPresent()) {
                 throw new IllegalArgumentException("Uma categoria com esse nome já existe.");
             }
 
@@ -55,7 +54,7 @@ public class CategoriaService {
                 categoria.setDescricao(descricao.trim());
             }
 
-            return categoriaRepository.save(categoria);
+            return this.repository.save(categoria);
 
         }catch (IllegalArgumentException e){
             throw new RuntimeException("Argumentos inválidos: " + e.getMessage());
@@ -67,10 +66,10 @@ public class CategoriaService {
 
     public Optional<Categoria> delete(int id){
         try{
-            Optional<Categoria> categoria = this.categoriaRepository.findById(id);
+            Optional<Categoria> categoria = this.repository.findById(id);
             if(categoria.isPresent()){
                 categoria.get();
-                this.categoriaRepository.deleteById(id);
+                this.repository.deleteById(id);
                 return categoria;
             }else{
                 throw new IllegalArgumentException("Não foi possivel encontrar categoria com esse id");
@@ -81,15 +80,12 @@ public class CategoriaService {
             throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
         }
     }
-
-    @Transactional
-    public List<Map<String, Object>> definirCategorias(String titulo, String corpo) {
+    public List<Map<String, Object>> definirCategorias(String titulo, String corpo, int pesoMinimo) {
         Map<String, Integer> categoriaPesos = new HashMap<>();
 
         this.categoriasPredefinidasRefresh();
 
          //peso minimo pra atribuir uma postagem a uma categoria
-        int pesoNecessario = 3;
 
         for (String categoria : this.categoriasPredefinidas) {
             int peso = 0;
@@ -103,14 +99,14 @@ public class CategoriaService {
             int occurrences = getOcorrenciaDeCategoria(corpo.trim().toLowerCase(), categoria.toLowerCase());
             peso += occurrences * 3;
 
-            if (peso >= pesoNecessario) {
+            if (peso >= pesoMinimo) {
                 categoriaPesos.put(categoria, peso);
             }
         }
 
         List<Map<String, Object>> resultado = new ArrayList<>();
         if (!categoriaPesos.isEmpty()) {
-            List<Categoria> categorias = categoriaRepository.findByNomeIn(new ArrayList<>(categoriaPesos.keySet()));
+            List<Categoria> categorias = this.repository.findByNomeIn(new ArrayList<>(categoriaPesos.keySet()));
             for (Categoria categoria : categorias) {
                 Map<String, Object> categoriaInfo = new HashMap<>();
                 categoriaInfo.put("id_categoria", categoria.getId());
