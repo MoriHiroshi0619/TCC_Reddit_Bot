@@ -1,21 +1,12 @@
 package com.example.tcc_reddit.controller.reddit;
 
-import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
-import com.example.tcc_reddit.DTOs.reddit.karma.KarmaDTO;
-import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
+
 import com.example.tcc_reddit.credentials.Credentials;
 import com.example.tcc_reddit.service.RedditService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController

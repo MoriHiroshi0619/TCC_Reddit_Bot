@@ -9,4 +9,6 @@ public interface SubRedditRepository extends JpaRepository<SubReddit, String> {
 
 
     Optional<SubReddit> findFirstBySubRedditName(String nome);
+
+    Optional<SubReddit> findFirstBySubRedditId(String id);
 }

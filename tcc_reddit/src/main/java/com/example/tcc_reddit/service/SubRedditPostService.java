@@ -9,7 +9,6 @@ import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
 import com.example.tcc_reddit.model.*;
 import com.example.tcc_reddit.repository.SubRedditPostRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -25,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class SubRedditPostService extends BaseReddit {
@@ -42,6 +42,7 @@ public class SubRedditPostService extends BaseReddit {
 
     @Autowired
     protected MunicipioService municipioService;
+
     public SubRedditPostService (Credentials credentials, SubRedditPostRepository repository){
         super(credentials);
         this.repository = repository;
@@ -96,13 +97,15 @@ public class SubRedditPostService extends BaseReddit {
     }
 
     public void savePosts(RedditListingDTO posts, int pesoMinimo) {
+        AtomicReference<RedditPostDataDTO> lastPostData = new AtomicReference<>();
         posts.getData().getChildren().forEach(post -> {
             if (post instanceof RedditPostDTO) {
                 try{
                     RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
+                    lastPostData.set(postData);
 
                     SubRedditPost subRedditPost = new SubRedditPost();
-                    subRedditPost.setId(postData.getId());
+                    subRedditPost.setPostId(postData.getId());
                     subRedditPost.setName(postData.getName());
                     subRedditPost.setSelftext(postData.getSelftext());
                     subRedditPost.setAuthor_id(postData.getAuthor_fullname());
@@ -140,11 +143,17 @@ public class SubRedditPostService extends BaseReddit {
 
                         categoriaEntity.ifPresent(categoriaGet -> this.subredditPostCategoriaServive.store(categoriaGet, subRedditPost, peso));
                     });
+
                 } catch (Exception e) {
                     throw new RuntimeException("Erro ao tentar salvar post: " + e.getMessage() + post);
                 }
             }
         });
+
+        RedditPostDataDTO lastPost = lastPostData.get();
+        if (lastPost != null) {
+            System.out.println("Último Post - Title: " + lastPost.getTitle() + ", Created UTC: " + lastPost.getCreated_utc());
+        }
     }
 
     public List<RedditListingDTO> getCommentsFromAPost(String postID) throws RedditApiException{

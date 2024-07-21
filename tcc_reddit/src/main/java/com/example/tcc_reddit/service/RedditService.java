@@ -7,6 +7,7 @@ import com.example.tcc_reddit.controller.reddit.BaseReddit;
 import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
 import com.example.tcc_reddit.model.SubReddit;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,8 @@ public class RedditService extends BaseReddit {
         super(credentials);
         this.subRedditPostService = subRedditPostService;
         this.subRedditService = subRedditService;
-
     }
+
 
     public void streamSubredditPosts(String subredditName, int intervalo, String before, int limite, String sort, int peso) throws RedditApiException {
         Optional<SubReddit> subReddit = this.subRedditService.getBySubRedditName(subredditName);
@@ -64,12 +65,16 @@ public class RedditService extends BaseReddit {
                 System.out.println("API: requests remaing            -> " + requests_remaing);
                 System.out.println("API: requests used               -> " + requests_used);
                 System.out.println("API: requests to reset           -> " + requests_reset);
-                System.out.println("-----------------------------------------");
+                MemoryService.logMemoryUsage();
+                System.out.println("--------------------------------------------------------------------------------------------------------");
 
                 Thread.sleep(intervalo * 1000L);
-            }catch (RedditApiException | InterruptedException e){
+            } catch (RedditApiException | InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RedditApiException("Streaming process interrupted: " + e.getMessage());
+            } catch (Exception e) {
+                System.err.println("Erro inesperado: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }

@@ -2,6 +2,9 @@ package com.example.tcc_reddit.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,4 +26,9 @@ public class SubredditPostCategoria {
 
     @Column(nullable = false)
     private Integer peso;
+
+    @CreationTimestamp
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    private LocalDateTime criadoEm;
+
 }

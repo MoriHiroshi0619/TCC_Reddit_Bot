@@ -26,7 +26,7 @@ public class SubRedditService extends BaseReddit {
 
     public Optional<SubReddit> getByid(String id){
         try{
-            Optional<SubReddit> subReddit = this.repository.findById(id);
+            Optional<SubReddit> subReddit = this.repository.findFirstBySubRedditId(id);
             if(subReddit.isPresent()){
                 subReddit.get();
                 return  subReddit;
@@ -51,12 +51,12 @@ public class SubRedditService extends BaseReddit {
     }
 
     @Transactional
-    public SubReddit store(String id, String nome, String titulo, String descricao){
+    public SubReddit store(String subRedditId, String nome, String titulo, String descricao){
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("O nome do subReddit não pode ser vazio.");
         }
         try{
-            SubReddit subReddit = new SubReddit(id, nome, titulo, descricao);
+            SubReddit subReddit = new SubReddit(subRedditId, nome, titulo, descricao);
             return this.repository.save(subReddit);
         }catch (Exception e) {
             throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
