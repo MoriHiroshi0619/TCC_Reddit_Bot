@@ -1,5 +1,6 @@
 package com.example.tcc_reddit.service;
 
+import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditChildDTO;
 import com.example.tcc_reddit.DTOs.reddit.baseStructure.RedditListingDTO;
 import com.example.tcc_reddit.DTOs.reddit.postSubmit.RedditPostSubmitDTO;
 import com.example.tcc_reddit.DTOs.reddit.postWatch.RedditPostDTO;
@@ -96,13 +97,21 @@ public class SubRedditPostService extends BaseReddit {
         }
     }
 
-    public void savePosts(RedditListingDTO posts, int pesoMinimo) {
+    public String savePosts(RedditListingDTO posts, int pesoMinimo) {
         AtomicReference<RedditPostDataDTO> lastPostData = new AtomicReference<>();
-        posts.getData().getChildren().forEach(post -> {
+        List<RedditChildDTO> children = posts.getData().getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            Object post = children.get(i);
             if (post instanceof RedditPostDTO) {
-                try{
+                try {
                     RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
                     lastPostData.set(postData);
+
+                    Optional<SubRedditPost> chechSeJaTem = this.repository.findFirstByPostId(postData.getId());
+                    if (chechSeJaTem.isPresent()) {
+                        System.out.println("Já tem um post igual no Banco de Dados");
+                        break;
+                    }
 
                     SubRedditPost subRedditPost = new SubRedditPost();
                     subRedditPost.setPostId(postData.getId());
@@ -148,12 +157,15 @@ public class SubRedditPostService extends BaseReddit {
                     throw new RuntimeException("Erro ao tentar salvar post: " + e.getMessage() + post);
                 }
             }
-        });
+        }
 
         RedditPostDataDTO lastPost = lastPostData.get();
+        String lastPostId = null;
         if (lastPost != null) {
             System.out.println("Último Post - Title: " + lastPost.getTitle() + ", Created UTC: " + lastPost.getCreated_utc());
+            lastPostId = lastPost.getId();
         }
+        return lastPostId;
     }
 
     public List<RedditListingDTO> getCommentsFromAPost(String postID) throws RedditApiException{

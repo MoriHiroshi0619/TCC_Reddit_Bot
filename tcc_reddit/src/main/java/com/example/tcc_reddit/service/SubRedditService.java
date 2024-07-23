@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,6 +48,14 @@ public class SubRedditService extends BaseReddit {
             return Optional.empty();
         }catch (Exception e){
             throw new RuntimeException("Erro ao recuperar o subreddit: " + e.getMessage());
+        }
+    }
+
+    public List<SubReddit> getAllSubReddits(){
+        try {
+            return this.repository.findAll();
+        }catch (Exception e){
+            throw new RuntimeException("Erro ao recuperar os subreddits: " + e.getMessage());
         }
     }
 
