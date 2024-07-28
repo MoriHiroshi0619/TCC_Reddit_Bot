@@ -97,21 +97,23 @@ public class SubRedditPostService extends BaseReddit {
         }
     }
 
-    public String savePosts(RedditListingDTO posts, int pesoMinimo) {
+    public Map<String, Object> savePosts(RedditListingDTO posts, int pesoMinimo) {
         AtomicReference<RedditPostDataDTO> lastPostData = new AtomicReference<>();
+        int totalSalvo = 0;
+        Map<String, Object> resultado = new HashMap<>();
         List<RedditChildDTO> children = posts.getData().getChildren();
         for (int i = 0; i < children.size(); i++) {
             Object post = children.get(i);
             if (post instanceof RedditPostDTO) {
                 try {
                     RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
-                    lastPostData.set(postData);
 
                     Optional<SubRedditPost> chechSeJaTem = this.repository.findFirstByPostId(postData.getId());
                     if (chechSeJaTem.isPresent()) {
-                        System.out.println("Já tem um post igual no Banco de Dados");
-                        break;
+                        continue;
                     }
+
+                    lastPostData.set(postData);
 
                     SubRedditPost subRedditPost = new SubRedditPost();
                     subRedditPost.setPostId(postData.getId());
@@ -143,6 +145,7 @@ public class SubRedditPostService extends BaseReddit {
                     subRedditPost.setMunicipio_id(municipio);
 
                     this.repository.save(subRedditPost);
+                    totalSalvo+= 1;
 
                     List<Map<String, Object>> categorias = this.categoriaService.definirCategorias(postData.getTitle(), postData.getSelftext(), pesoMinimo);
                     categorias.forEach(categoria -> {
@@ -165,7 +168,9 @@ public class SubRedditPostService extends BaseReddit {
             System.out.println("Último Post - Title: " + lastPost.getTitle() + ", Created UTC: " + lastPost.getCreated_utc());
             lastPostId = lastPost.getId();
         }
-        return lastPostId;
+        resultado.put("lastPostId", lastPostId);
+        resultado.put("totalSalvo", totalSalvo);
+        return resultado;
     }
 
     public List<RedditListingDTO> getCommentsFromAPost(String postID) throws RedditApiException{

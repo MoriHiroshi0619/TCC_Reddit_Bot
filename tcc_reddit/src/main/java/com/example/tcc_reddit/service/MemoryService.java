@@ -1,8 +1,12 @@
 package com.example.tcc_reddit.service;
 
+import org.springframework.stereotype.Service;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+
+@Service
 public class MemoryService {
     private static final MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 

@@ -10,6 +10,7 @@ import com.example.tcc_reddit.model.SubReddit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,21 +18,21 @@ import java.util.Optional;
 
 @Service
 public class RedditService extends BaseReddit {
-    //todo controle pra quando acabar todos os fetch interroper a thread
     //todo usar blocos try catch
-    //todo implementar o uso de before pra recuperar os mais novos
-    //todo verificar o erro Exception in thread "Thread-15" java.lang.RuntimeException: Erro ao recuperar o subreddit: Error creating bean with name 'spring.datasource-org.springframework.boot.autoconfigure.jdbc.DataSourceProperties': Could not bind properties to 'DataSourceProperties' : prefix=spring.datasource, ignoreInvalidFields=false, ignoreUnknownFields=true
-    //todo melhorar a mensagem no console quando terminar o stream de um subreddit
-    //todo tentat colocar o total lido por seção no console
+    //todo não iniciar stream quando não houver coordenadas.
     protected final SubRedditService subRedditService;
-
     protected final SubRedditPostService subRedditPostService;
-
+    protected final CategoriaService categoriaService;
     @Autowired
-    public RedditService(SubRedditPostService subRedditPostService, Credentials credentials, SubRedditService subRedditService) {
+    public RedditService(SubRedditPostService subRedditPostService,
+                         Credentials credentials,
+                         SubRedditService subRedditService,
+                         CategoriaService categoriaService)
+    {
         super(credentials);
         this.subRedditPostService = subRedditPostService;
         this.subRedditService = subRedditService;
+        this.categoriaService = categoriaService;
     }
 
     public void streamSubreddits(List<String> subredditsName, int intervalo, int limite, String sort, int peso) throws RedditApiException{
@@ -39,9 +40,20 @@ public class RedditService extends BaseReddit {
             this.fetchAndSaveSubReddit(subredditName);
         }
         List<SubReddit> subReddits = this.subRedditService.getAllSubReddits();
+        if (!this.categoriaService.categoriaExists()){
+            System.out.println("Não Existe categoria no banco de dados!!!");
+            System.out.println("Adicionando categorias iniciais pré-definidas");
+            this.categoriaService.storeCategoriasIniciais();
+            System.out.println("Categorias iniciais salvas com sucesso.\n");
+        }
         for (SubReddit subReddit : subReddits) {
+            if (Thread.currentThread().isInterrupted()) {
+                System.out.println("Thread foi interrompida, saindo do loop.");
+                return;
+            }
             this.streamSubredditPosts(subReddit, intervalo, limite, sort, peso);
         }
+        System.out.println("\n\n*****Terminou o FETCH*****\n\n");
     }
 
     public void fetchAndSaveSubReddit(String subredditName) throws RedditApiException{
@@ -55,21 +67,58 @@ public class RedditService extends BaseReddit {
 
     private void streamSubredditPosts(SubReddit subReddit, int intervalo, int limite, String sort, int peso) throws RedditApiException {
         boolean aindaTemPost = true;
+        int totalLidos = 0;
+        System.out.println("\n---inicio do stream para o subreddit  : " + subReddit.getSubRedditName() + "---\n");
         while (aindaTemPost) {
-            aindaTemPost = this.fetchAndSavePosts(subReddit, sort, limite, intervalo, peso);
+            Map<String, Object> retorno = this.fetchAndSavePosts(subReddit, sort, limite, intervalo, peso);
+            aindaTemPost = (boolean) retorno.get("continuar");
+            totalLidos += (int) retorno.get("qtdPostsLidos");
+            if((int) retorno.get("qtdPostsLidos") != 0){
+                System.out.println("Total de posts lidos nessa seção -> " + totalLidos);
+            }
         }
-        System.out.println("Fim do stream para o subreddit   : " + subReddit.getSubRedditName());
+        if(totalLidos == 0){
+            System.out.println("Não houve stream para esse subreddit");
+        }
+        System.out.println("\n---Fim do stream para o subreddit     : " + subReddit.getSubRedditName() + "---\n");
     }
 
-    private boolean fetchAndSavePosts(SubReddit subReddit, String sort, int limite, int intervalo, int peso)  throws RedditApiException{
+    private Map<String, Object> fetchAndSavePosts(SubReddit subReddit, String sort, int limite, int intervalo, int peso)  throws RedditApiException{
+        Map<String, Object> retorno = new HashMap<>();
         try {
-            Map<String, Object> resultado = this.subRedditPostService.fetchPosts(subReddit.getSubRedditName(), subReddit.getAfter(), null, limite, sort);
-            RedditListingDTO posts = (RedditListingDTO) resultado.get("redditListinfDto");
-            String postId = this.subRedditPostService.savePosts(posts, peso);
-            if (postId == null){
-                return false;
+            Map<String, Object> resultado;
+            if(!subReddit.isAcabou_after()){
+                resultado = this.subRedditPostService.fetchPosts(subReddit.getSubRedditName(), subReddit.getAfter(), null, limite, sort);
+            }else{
+                resultado = this.subRedditPostService.fetchPosts(subReddit.getSubRedditName(), null, subReddit.getBefore(), limite, sort);
             }
-            subReddit.setAfter("t3_" + postId);
+
+            RedditListingDTO posts = (RedditListingDTO) resultado.get("redditListinfDto");
+
+            Map<String, Object> resultadoSalvos = this.subRedditPostService.savePosts(posts, peso);
+            String postId = (String) resultadoSalvos.get("lastPostId");
+            int totalSalvos = (int) resultadoSalvos.get("totalSalvo");
+            if (postId == null && !subReddit.isAcabou_after()){
+                subReddit.setAcabou_after(true);
+                retorno.put("qtdPostsLidos", 0);
+                retorno.put("continuar", true);
+                return retorno;
+            } else if (postId == null) {
+                retorno.put("qtdPostsLidos", 0);
+                retorno.put("continuar", false);
+                return retorno;
+            }
+
+            if(!subReddit.isAcabou_after()){
+                subReddit.setAfter("t3_" + postId);
+            }else{
+                subReddit.setBefore("t3_" + postId);
+            }
+
+            if(subReddit.getBefore() == null){
+                subReddit.setBefore("t3_" + postId);
+            }
+
             this.subRedditService.save(subReddit);
 
             String requests_remaing = (String) resultado.get("requests_remaing");
@@ -84,7 +133,9 @@ public class RedditService extends BaseReddit {
             MemoryService.logMemoryUsage();
 
             Thread.sleep(intervalo * 1000L);
-            return true;
+            retorno.put("continuar", true);
+            retorno.put("qtdPostsLidos", totalSalvos);
+            return retorno;
         } catch (RedditApiException | InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RedditApiException("Streaming process interrupted: " + e.getMessage());
@@ -92,7 +143,9 @@ public class RedditService extends BaseReddit {
             System.err.println("Erro inesperado: " + e.getMessage());
             e.printStackTrace();
         }
-        return false;
+        retorno.put("continuar", false);
+        return retorno;
     }
+
 }
 

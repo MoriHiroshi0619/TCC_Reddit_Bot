@@ -39,9 +39,10 @@ public class RedditApiController extends BaseReddit {
     @GetMapping("/start-stream-subreddit")
     public ResponseEntity<String> streamSubreddit(@RequestBody Map<String, Object> dados) {
         try {
-            if(this.streamingActive){
+            if(this.streamingActive) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O Stream já está ativo");
             }
+
             int intervalo = Integer.parseInt((String) dados.getOrDefault("intervalo", "10"));
             int limite = Integer.parseInt((String) dados.getOrDefault("limite", "50"));
             String sort = (String) dados.getOrDefault("sort", "new");
@@ -51,18 +52,19 @@ public class RedditApiController extends BaseReddit {
             this.streamingActive = true;
             this.streamingThread = new Thread(() -> {
                 try {
-                    while (streamingActive) {
-                        this.service.streamSubreddits(subreddits, intervalo, limite, sort, peso);
-                    }
+                    this.service.streamSubreddits(subreddits, intervalo, limite, sort, peso);
+                    this.streamingThread.interrupt();
                 } catch (RedditApiException e) {
                     e.printStackTrace();
+                } finally {
+                    this.streamingActive = false;
                 }
             });
             this.streamingThread.start();
-            return ResponseEntity.ok("Streaming iniciado !");
-        }catch (RedditApiException e){
+            return ResponseEntity.ok("Streaming iniciado!");
+        } catch (RedditApiException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao iniciar streaming: " + e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao iniciar streaming: " + e.getMessage());
         }
     }

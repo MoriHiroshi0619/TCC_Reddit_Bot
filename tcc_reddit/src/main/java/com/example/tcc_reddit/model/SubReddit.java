@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Setter
@@ -33,6 +32,9 @@ public class SubReddit{
     @Column(nullable = true)
     private String title;
 
+    @Column(nullable = true)
+    private boolean acabou_after;
+
     @Column(nullable = true, columnDefinition = "TEXT")
     private String description;
 
@@ -45,6 +47,7 @@ public class SubReddit{
     public SubReddit(String id, String subRedditName) {
         this.subRedditId = id;
         this.subRedditName = subRedditName;
+        this.acabou_after = false;
     }
 
     public SubReddit(String id, String subRedditName, String title, String description) {
@@ -52,6 +55,7 @@ public class SubReddit{
         this.subRedditName = subRedditName;
         this.title = title;
         this.description = description;
+        this.acabou_after = false;
     }
 
 }

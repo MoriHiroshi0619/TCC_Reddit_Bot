@@ -30,7 +30,7 @@ public class SubRedditService extends BaseReddit {
             Optional<SubReddit> subReddit = this.repository.findFirstBySubRedditId(id);
             if(subReddit.isPresent()){
                 subReddit.get();
-                return  subReddit;
+                return subReddit;
             }
             return Optional.empty();
         }catch (Exception e){
