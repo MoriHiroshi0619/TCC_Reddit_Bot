@@ -80,6 +80,21 @@ public class CategoriaService {
             throw new RuntimeException("Erro ao criar a categoria: " + e.getMessage());
         }
     }
+
+    public boolean categoriaExists(){
+        return this.repository.count() > 0;
+    }
+
+    public void storeCategoriasIniciais(){
+        if(this.categoriaExists()){
+            return;
+        }
+        try{
+            this.repository.insertCategoriasIniciais();
+        }catch (Exception e){
+            throw new RuntimeException("Erro ao criar categorias iniciais: " + e.getMessage());
+        }
+    }
     public List<Map<String, Object>> definirCategorias(String titulo, String corpo, int pesoMinimo) {
         Map<String, Integer> categoriaPesos = new HashMap<>();
 

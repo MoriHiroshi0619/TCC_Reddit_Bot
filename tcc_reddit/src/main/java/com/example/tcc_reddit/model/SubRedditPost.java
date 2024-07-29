@@ -3,7 +3,9 @@ package com.example.tcc_reddit.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +15,8 @@ import java.util.Set;
 @Table(name = "subreddit_post")
 public class SubRedditPost {
 
-    @Id
-    private String id;
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "subreddit_id", referencedColumnName = "id")
@@ -27,6 +29,8 @@ public class SubRedditPost {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<SubredditPostCategoria> categorias = new HashSet<>();
 
+    @Column(nullable = false)
+    private String postId;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -68,11 +72,15 @@ public class SubRedditPost {
     @Column(nullable = true)
     private String edited_at;
 
+    @CreationTimestamp
+    @Column(name = "criado_em", nullable = false, updatable = false)
+    private LocalDateTime criadoEm;
+
     //contrutor padrão
     public SubRedditPost() {}
 
-    public SubRedditPost(String id, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, boolean approved, String approved_at_utc, String approved_by, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int downs, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
-        this.id = id;
+    public SubRedditPost(String postID, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, boolean approved, String approved_at_utc, String approved_by, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int downs, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
+        this.postId = postID;
         this.subreddit_id = subreddit_id;
         this.selftext = selftext;
         this.author_id = author_fullname;
