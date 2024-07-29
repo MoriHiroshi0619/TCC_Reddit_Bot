@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class RedditApiController extends BaseReddit {
                 try {
                     this.service.streamSubreddits(subreddits, intervalo, limite, sort, peso);
                     this.streamingThread.interrupt();
-                } catch (RedditApiException e) {
+                } catch (RedditApiException | IOException e) {
                     e.printStackTrace();
                 } finally {
                     this.streamingActive = false;

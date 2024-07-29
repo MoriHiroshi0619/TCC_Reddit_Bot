@@ -17,7 +17,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Component
 public class RedditCommentDataDTO {
-    //@todo corrigir o campo "edit", edit ? float : false
     private String subreddit_id;
     private String subreddit;
     private String id;

@@ -10,6 +10,7 @@ import com.example.tcc_reddit.model.SubReddit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,34 +19,29 @@ import java.util.Optional;
 
 @Service
 public class RedditService extends BaseReddit {
-    //todo usar blocos try catch
-    //todo não iniciar stream quando não houver coordenadas.
+
     protected final SubRedditService subRedditService;
     protected final SubRedditPostService subRedditPostService;
     protected final CategoriaService categoriaService;
+    protected final MunicipioService municipioService;
+
     @Autowired
-    public RedditService(SubRedditPostService subRedditPostService,
-                         Credentials credentials,
-                         SubRedditService subRedditService,
-                         CategoriaService categoriaService)
+    public RedditService(Credentials credentials, SubRedditService subRedditService, SubRedditPostService subRedditPostService, CategoriaService categoriaService, MunicipioService municipioService)
     {
         super(credentials);
-        this.subRedditPostService = subRedditPostService;
         this.subRedditService = subRedditService;
+        this.subRedditPostService = subRedditPostService;
         this.categoriaService = categoriaService;
+        this.municipioService = municipioService;
     }
 
-    public void streamSubreddits(List<String> subredditsName, int intervalo, int limite, String sort, int peso) throws RedditApiException{
+    public void streamSubreddits(List<String> subredditsName, int intervalo, int limite, String sort, int peso) throws RedditApiException, IOException {
         for (String subredditName : subredditsName) {
             this.fetchAndSaveSubReddit(subredditName);
         }
         List<SubReddit> subReddits = this.subRedditService.getAllSubReddits();
-        if (!this.categoriaService.categoriaExists()){
-            System.out.println("Não Existe categoria no banco de dados!!!");
-            System.out.println("Adicionando categorias iniciais pré-definidas");
-            this.categoriaService.storeCategoriasIniciais();
-            System.out.println("Categorias iniciais salvas com sucesso.\n");
-        }
+        this.verifiacarCategorias();
+        this.verificarMunicipios();
         for (SubReddit subReddit : subReddits) {
             if (Thread.currentThread().isInterrupted()) {
                 System.out.println("Thread foi interrompida, saindo do loop.");
@@ -145,6 +141,24 @@ public class RedditService extends BaseReddit {
         }
         retorno.put("continuar", false);
         return retorno;
+    }
+
+    private void verifiacarCategorias(){
+        if (!this.categoriaService.categoriaExists()){
+            System.out.println("Não Existe categoria no banco de dados!!!");
+            System.out.println("Adicionando categorias iniciais pré-definidas");
+            this.categoriaService.storeCategoriasIniciais();
+            System.out.println("Categorias iniciais salvas com sucesso.\n");
+        }
+    }
+
+    private void verificarMunicipios() throws IOException {
+        if(!this.municipioService.municipioExists()){
+            System.out.println("Não Existe Municipios no banco de dados!!!");
+            System.out.println("Adicionando Municipios e suas coordenadas");
+            this.municipioService.importarMunicipiosDoExcel();
+            System.out.println("Municipios salvos com sucesso.\n");
+        }
     }
 
 }

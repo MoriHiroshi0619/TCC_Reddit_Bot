@@ -24,7 +24,10 @@ public class MunicipioService {
     }
 
     @Transactional
-    public void importarMunicipiosDoExcel(String caminhoDoArquivo) throws IOException {
+    public void importarMunicipiosDoExcel() throws IOException {
+        //caminho do arquivo xls salvo em meu computador
+        String caminhoDoArquivo = "/Users/hiroshi/TCC/TCC_Reddit_Bot/tabela-municipios.xls";
+
         FileInputStream file = new FileInputStream(caminhoDoArquivo);
         //Workbook workbook = new XSSFWorkbook(file);
         Workbook workbook = new HSSFWorkbook(file); //formato antigo do arquivo xls que eu tenho dos municipios
@@ -90,6 +93,10 @@ public class MunicipioService {
 
         workbook.close();
         file.close();
+    }
+
+    public boolean municipioExists(){
+        return this.repository.count() > 0;
     }
 
     public Municipio getRandomMunicipio() {

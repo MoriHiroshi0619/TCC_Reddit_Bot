@@ -32,11 +32,8 @@ public class MunicipioController {
 
     @PostMapping("/importar")
     public ResponseEntity<String> importarMunicipios() {
-        //caminho do arquivo xls salvo em meu computador
-        String caminhoDoArquivo = "/Users/hiroshi/OneDrive/TCC/TCC_Reddit_Bot/tabela-municipios.xls";
-
         try {
-            municipioService.importarMunicipiosDoExcel(caminhoDoArquivo);
+            municipioService.importarMunicipiosDoExcel();
             return ResponseEntity.status(HttpStatus.OK).body("Municípios importados com sucesso!");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao importar municípios: " + e.getMessage());
