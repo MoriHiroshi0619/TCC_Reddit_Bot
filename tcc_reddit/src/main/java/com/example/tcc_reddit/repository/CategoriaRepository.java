@@ -12,8 +12,6 @@ import java.util.Optional;
 public interface CategoriaRepository extends JpaRepository <Categoria, Integer> {
     List<Categoria> findByNomeIn(List<String> nomes);
 
-    Optional<Categoria> findFirstByNome(String nome);
-
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO categoria (descricao, nome) VALUES " +
@@ -28,9 +26,7 @@ public interface CategoriaRepository extends JpaRepository <Categoria, Integer> 
             "('Linguagem de programação', 'php')," +
             "('Linguagem de programação', 'javascript')," +
             "('Linguagem de programação', 'swift')," +
-            "('Linguagem de programação', 'go')," +
             "('Linguagem de programação', 'kotlin')," +
-            "('Linguagem de programação', 'r')," +
             "('Linguagem de programação', 'perl')," +
             "('Linguagem de programação', 'scala')," +
             "('Linguagem de programação', 'dart')," +
@@ -91,4 +87,6 @@ public interface CategoriaRepository extends JpaRepository <Categoria, Integer> 
             "('metodologia ágil', 'scrum')," +
             "('metodologia ágil', 'kanban')", nativeQuery = true)
     void insertCategoriasIniciais();
+
+    Optional<Categoria> findFirstByNome(String nome);
 }

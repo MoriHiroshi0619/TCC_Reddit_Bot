@@ -108,8 +108,8 @@ public class SubRedditPostService extends BaseReddit {
                 try {
                     RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
 
-                    Optional<SubRedditPost> chechSeJaTem = this.repository.findFirstByPostId(postData.getId());
-                    if (chechSeJaTem.isPresent()) {
+                    Optional<SubRedditPost> verificaSeExiste = this.repository.findFirstByPostId(postData.getId());
+                    if (verificaSeExiste.isPresent()) {
                         continue;
                     }
 
@@ -122,9 +122,6 @@ public class SubRedditPostService extends BaseReddit {
                     subRedditPost.setAuthor_id(postData.getAuthor_fullname());
                     subRedditPost.setAuthor(postData.getAuthor());
                     subRedditPost.setSaved(postData.isSaved());
-                    subRedditPost.setApproved(postData.isApproved());
-                    subRedditPost.setApproved_at_utc(postData.getApproved_at_utc());
-                    subRedditPost.setApproved_by(postData.getApproved_by());
                     subRedditPost.setSubreddit_name_prefixed(postData.getSubreddit_name_prefixed());
                     subRedditPost.setTitle(postData.getTitle());
                     subRedditPost.setUpvote_ratio(postData.getUpvote_ratio());
