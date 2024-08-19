@@ -3,8 +3,7 @@
 <h2>&#128203; Lista</h2>
 
 <ul>
-  <li>Arrumar Bug de stream que não salva no banco de dados após 850 itens</li>
-  <li>implementar front-end</li>
+  
 </ul>
   
 <h2>&#128276; Lembretes </h2>
