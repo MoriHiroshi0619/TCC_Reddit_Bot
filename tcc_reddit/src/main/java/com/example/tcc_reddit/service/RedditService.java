@@ -36,6 +36,8 @@ public class RedditService extends BaseReddit {
     }
 
     public void streamSubreddits(List<String> subredditsName, int intervalo, int limite, String sort, int peso) throws RedditApiException, IOException {
+        Map<String, Integer> fetchResults = new HashMap<>();
+
         for (String subredditName : subredditsName) {
             this.fetchAndSaveSubReddit(subredditName);
         }
@@ -47,9 +49,14 @@ public class RedditService extends BaseReddit {
                 System.out.println("Thread foi interrompida, saindo do loop.");
                 return;
             }
-            this.streamSubredditPosts(subReddit, intervalo, limite, sort, peso);
+            int totalLido = this.streamSubredditPosts(subReddit, intervalo, limite, sort, peso);
+            fetchResults.put(subReddit.getSubRedditName(), totalLido);
         }
         System.out.println("\n\n*****Terminou o FETCH*****\n\n");
+        System.out.println("Total de posts lidos por subreddit:");
+        fetchResults.forEach((key, value) -> System.out.println(key + " => " + value));
+        int total = fetchResults.values().stream().mapToInt(Integer::intValue).sum();
+        System.out.println("\nTotal de posts lidos: " + total);
     }
 
     public void fetchAndSaveSubReddit(String subredditName) throws RedditApiException{
@@ -61,7 +68,7 @@ public class RedditService extends BaseReddit {
         }
     }
 
-    private void streamSubredditPosts(SubReddit subReddit, int intervalo, int limite, String sort, int peso) throws RedditApiException {
+    private int streamSubredditPosts(SubReddit subReddit, int intervalo, int limite, String sort, int peso) throws RedditApiException {
         boolean aindaTemPost = true;
         int totalLidos = 0;
         System.out.println("\n---inicio do stream para o subreddit  : " + subReddit.getSubRedditName() + "---\n");
@@ -77,6 +84,7 @@ public class RedditService extends BaseReddit {
             System.out.println("Não houve stream para esse subreddit");
         }
         System.out.println("\n---Fim do stream para o subreddit     : " + subReddit.getSubRedditName() + "---\n");
+        return totalLidos;
     }
 
     private Map<String, Object> fetchAndSavePosts(SubReddit subReddit, String sort, int limite, int intervalo, int peso)  throws RedditApiException{

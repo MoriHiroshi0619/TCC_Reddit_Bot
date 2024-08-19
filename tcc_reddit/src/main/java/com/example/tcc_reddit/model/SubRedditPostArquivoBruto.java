@@ -12,10 +12,11 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "subreddit_post")
-public class SubRedditPost {
+@Table(name = "subreddit_post_arquivo_bruto")
+public class SubRedditPostArquivoBruto {
 
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -27,14 +28,14 @@ public class SubRedditPost {
     private Municipio municipio_id;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<SubredditPostCategoria> categorias = new HashSet<>();
+    private Set<SubredditpostCategoriaArquivoBruto> categorias = new HashSet<>();
 
     @Column(nullable = false)
     private String postId;
-    @Column(nullable = false)
-    private String name;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String selftext;
+    @Column(nullable = true)
+    private String name;
     @Column(nullable = true)
     private String author_id; //author_fullname do DTO
     @Column(nullable = true)
@@ -70,10 +71,9 @@ public class SubRedditPost {
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
-    //contrutor padrão
-    public SubRedditPost() {}
+    public SubRedditPostArquivoBruto() {}
 
-    public SubRedditPost(String postID, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int downs, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
+    public SubRedditPostArquivoBruto(String postID, SubReddit subreddit_id, String selftext, String author_fullname, String author, boolean saved, String subreddit_name_prefixed, String title, float upvote_ratio, int ups, int downs, int score, String created, int num_comments, String url, boolean over_18, String created_utc, String edited_at) {
         this.postId = postID;
         this.subreddit_id = subreddit_id;
         this.selftext = selftext;
