@@ -8,6 +8,7 @@ import com.example.tcc_reddit.controller.reddit.RedditApiException;
 import com.example.tcc_reddit.credentials.Credentials;
 import com.example.tcc_reddit.model.SubReddit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -164,7 +165,7 @@ public class RedditService extends BaseReddit {
         if(!this.municipioService.municipioExists()){
             System.out.println("Não Existe Municipios no banco de dados!!!");
             System.out.println("Adicionando Municipios e suas coordenadas");
-            this.municipioService.importarMunicipiosDoExcel();
+            this.municipioService.importarMunicipiosDoExcel("/Users/hiroshi/TCC/TCC_Reddit_Bot/tabela-municipios.xls");
             System.out.println("Municipios salvos com sucesso.\n");
         }
     }

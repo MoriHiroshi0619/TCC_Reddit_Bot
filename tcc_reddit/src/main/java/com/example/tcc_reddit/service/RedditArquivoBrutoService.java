@@ -16,11 +16,10 @@ public class RedditArquivoBrutoService {
     public RedditArquivoBrutoService(SubRedditPostArquivoBrutoService subRedditPostArquivoBrutoService) {
         this.subRedditPostArquivoBrutoService = subRedditPostArquivoBrutoService;
     }
-    public void iniciarLeituraDeArquivoBruto() throws IOException {
-        //caminho do arquivo zst salvo em meu computador
-        String caminhoArquivoZst = "/Users/hiroshi/TCC/TCC_Reddit_Bot/subreddits23/brdev_submissions.zst";
-        int pesoMinimo = 9;
 
+    public void iniciarLeituraDeArquivoBruto(String caminhoArquivoZst) throws IOException {
+        int pesoMinimo = 9;
+        System.out.println("Iniciando leitura de arquivo bruto: " + caminhoArquivoZst);
         // Cria o ObjectMapper para processar JSON
         ObjectMapper objectMapper = new ObjectMapper();
 
