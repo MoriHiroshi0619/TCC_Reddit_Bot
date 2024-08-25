@@ -4,9 +4,9 @@ import com.example.tcc_reddit.service.RedditArquivoBrutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/reddit/arquivo-bruto")
@@ -21,8 +21,13 @@ public class RedditArquivoBrutoController {
         this.service = service;
     }
 
-    @GetMapping("/iniciar-leitura-de-arquivo-bruto")
-    public ResponseEntity<String> iniciarLeituraDeArquivoBruto() {
+    @PostMapping("/iniciar-leitura-de-arquivo-bruto")
+    public ResponseEntity<String> iniciarLeituraDeArquivoBruto(@RequestBody Map<String, String> requestBody) {
+
+        String caminhoArquivoZst = requestBody.get("caminhoArquivoZst");
+        if (caminhoArquivoZst == null || caminhoArquivoZst.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O caminho do arquivo ZST é obrigatório");
+        }
 
         try {
             if (leituraArquivoBrutoThread != null && leituraArquivoBrutoThread.isAlive()) {
@@ -32,7 +37,7 @@ public class RedditArquivoBrutoController {
             this.leituraActive = true;
             this.leituraArquivoBrutoThread = new Thread(() -> {
                 try {
-                    this.service.iniciarLeituraDeArquivoBruto();
+                    this.service.iniciarLeituraDeArquivoBruto(caminhoArquivoZst);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

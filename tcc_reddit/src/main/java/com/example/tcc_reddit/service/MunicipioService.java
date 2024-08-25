@@ -24,10 +24,7 @@ public class MunicipioService {
     }
 
     @Transactional
-    public void importarMunicipiosDoExcel() throws IOException {
-        //caminho do arquivo xls salvo em meu computador
-        String caminhoDoArquivo = "/Users/hiroshi/TCC/TCC_Reddit_Bot/tabela-municipios.xls";
-
+    public void importarMunicipiosDoExcel(String caminhoDoArquivo) throws IOException {
         FileInputStream file = new FileInputStream(caminhoDoArquivo);
         //Workbook workbook = new XSSFWorkbook(file);
         Workbook workbook = new HSSFWorkbook(file); //formato antigo do arquivo xls que eu tenho dos municipios
