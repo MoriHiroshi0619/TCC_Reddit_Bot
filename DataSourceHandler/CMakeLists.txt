@@ -1,32 +1,33 @@
-#cmake_minimum_required(VERSION 3.29)
-#project(DataSourceHandler)
-#
-#set(CMAKE_CXX_STANDARD 20)
-#
-#add_executable(DataSourceHandler main.cpp)
+cmake_minimum_required(VERSION 3.18)
 
-
-cmake_minimum_required(VERSION 3.29)
+# Nome do projeto
 project(DataSourceHandler)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Encontre a biblioteca libpqxx
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBPQXX REQUIRED libpqxx)
-include_directories(${LIBPQXX_INCLUDE_DIRS})
-
-# Inclua o diretório onde os arquivos de cabeçalho estão localizados
+# Incluir diretórios de headers
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# Lista de todos os arquivos .cpp
-set(SOURCES
+# Definir caminhos para as bibliotecas e headers do PostgreSQL
+set(PostgreSQL_INCLUDE_DIR "/usr/local/opt/libpq/include")
+set(PostgreSQL_LIBRARY "/usr/local/opt/libpq/lib/libpq.dylib")
+
+# Adicionar o diretório da libpqxx ao projeto
+add_subdirectory(lib/libpqxx build-pqxx)
+
+# Adicionar o executável principal do projeto
+add_executable(DataSourceHandler
         src/main.cpp
         src/DatabaseConnection.cpp
+        include/DatabaseSecretConstants.h
+        # Adicione outros arquivos fonte se necessário
 )
 
-# Adiciona o executável
-add_executable(DataSourceHandler ${SOURCES})
+# Linkar a biblioteca pqxx e libpq
+target_link_libraries(DataSourceHandler PRIVATE pqxx ${PostgreSQL_LIBRARY})
 
-# Linka a biblioteca libpqxx
-target_link_libraries(DataSourceHandler ${LIBPQXX_LIBRARIES})
+# Incluir os diretórios adicionais necessários
+include_directories(${PostgreSQL_INCLUDE_DIR})
+
+
