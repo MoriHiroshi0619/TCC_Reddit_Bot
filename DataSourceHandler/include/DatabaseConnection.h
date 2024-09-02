@@ -8,6 +8,9 @@ public:
     // Construtor
     DatabaseConnection(const std::string& connectionString);
 
+    //segundo construtor, sem argumentos
+    DatabaseConnection();
+
     //return: instancia de pqxx::result
     pqxx::result executeQuery(const std::string& query);
 
