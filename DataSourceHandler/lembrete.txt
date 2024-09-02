@@ -1,0 +1,4 @@
+----------To do List-------------
+
+1 -como eu posso já fazer um git clone numa branch especifica deles ? eles separam as versões em branchs, eu ia fazer assim dentro do meu novo dir "lib/"
+ 	`git clone -B 7.9.2  git@github.com:jtv/libpqxx.git`            
