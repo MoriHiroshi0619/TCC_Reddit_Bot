@@ -1,4 +1,4 @@
-#include "DatabaseConnection.cpp"
+#include "src/DatabaseConnection.cpp"
 #include <DatabaseSecretConstants.h>
 
 int main() {

@@ -21,9 +21,9 @@ add_subdirectory(lib/libpqxx build-pqxx)
 link_directories(${PostgreSQL_LIBRARY_DIR})
 
 add_executable(DataSourceHandler
-        src/main.cpp
+        main.cpp
         src/DatabaseConnection.cpp
-        include/DatabaseSecretConstants.h
+        include/DatabaseConnection.h
 )
 
 target_link_libraries(DataSourceHandler PRIVATE pqxx pq)

@@ -5,13 +5,12 @@
 
 class DatabaseConnection {
 public:
-    // Construtor
     DatabaseConnection(const std::string& connectionString);
 
-    //return: instancia de pqxx::result
-    pqxx::result executeQuery(const std::string& query);
 
-    // Destrutor
+    void executeQuery(const std::string& query);
+
+
     ~DatabaseConnection();
 
 private:
