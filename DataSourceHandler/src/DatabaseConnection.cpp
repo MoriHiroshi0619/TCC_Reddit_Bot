@@ -3,7 +3,6 @@
 
 class DatabaseConnection {
 public:
-    // Construtor que estabelece a conexão com o banco de dados
     DatabaseConnection(const std::string& connection_str)
         : conn(connection_str) {
         if (conn.is_open()) {
@@ -13,16 +12,13 @@ public:
         }
     }
 
-    // Destruidor que fecha a conexão automaticamente
     ~DatabaseConnection() {
-        // A conexão é fechada automaticamente quando o objeto sai de escopo
         if (conn.is_open()) {
             std::cout << "Desconectando do banco de dados: " << conn.dbname() << std::endl;
         }
     }
 
-    // Exemplo de método para realizar uma consulta
-    void performQuery(const std::string& query) {
+    void executeQuery(const std::string& query) {
         try {
             pqxx::work txn(conn);
             pqxx::result res = txn.exec(query);
