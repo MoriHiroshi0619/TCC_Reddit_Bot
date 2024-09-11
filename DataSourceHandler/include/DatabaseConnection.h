@@ -2,19 +2,18 @@
 #define DATABASECONNECTION_H
 
 #include <pqxx/pqxx>
+#include <string>
 
 class DatabaseConnection {
 public:
-    DatabaseConnection(const std::string& connectionString);
+    DatabaseConnection();
 
 
-    void executeQuery(const std::string& query);
-
+    pqxx::result executeQuery(const std::string& query);
 
     ~DatabaseConnection();
-
 private:
-    pqxx::connection *conn;  // Ponteiro para a conexão do banco de dados
+    pqxx::connection conn;  // Instância da conexão (não mais ponteiro)
 };
 
 #endif

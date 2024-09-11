@@ -24,6 +24,8 @@ add_executable(DataSourceHandler
         main.cpp
         src/DatabaseConnection.cpp
         include/DatabaseConnection.h
+        include/RedditsPosts.h
+        src/RedditsPosts.cpp
 )
 
 target_link_libraries(DataSourceHandler PRIVATE pqxx pq)
