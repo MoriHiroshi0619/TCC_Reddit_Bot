@@ -1,17 +1,24 @@
-#include <iostream>
 #include "DatabaseConnection.h"
-#include "RedditsPosts.h"
+#include "RedditsPostsRepository.h"
+#include "Posts.h"
+#include <iostream>
 
 int main() {
     try {
-        DatabaseConnection dbConn;
+        DatabaseConnection db;
 
-        RedditsPosts redditPosts(dbConn);
+        RedditsPostsRepository repository(db);
+        std::vector<Posts> posts = repository.fetchPosts(10);
 
-        redditPosts.fetchPosts();
-
-    } catch (const std::exception& e) {
-        std::cerr << "Erro: " << e.what() << std::endl;
+        for (const auto& post : posts) {
+            std::cout << "Post [Categoria: " << post.getCategoriaNome()
+                      << ", Latitude: " << post.getLatitude()
+                      << ", Longitude: " << post.getLongitude()
+                      << ", Criado em: " << post.getCriadoEm() << "]"
+                      << std::endl;
+        }
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
     }
 
     return 0;
