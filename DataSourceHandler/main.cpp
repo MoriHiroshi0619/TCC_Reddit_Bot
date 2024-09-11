@@ -1,17 +1,36 @@
-#include <iostream>
 #include "DatabaseConnection.h"
-#include "RedditsPosts.h"
+#include "RedditsPostsRepository.h"
+#include "Posts.h"
+#include <iostream>
 
 int main() {
     try {
-        DatabaseConnection dbConn;
+        DatabaseConnection db;
 
-        RedditsPosts redditPosts(dbConn);
+        RedditsPostsRepository repository(db);
+        //std::vector<Posts> posts = repository.fetchPosts(10);
+        //std::vector<Posts> posts = repository.fetchPostsByCategoryId(3, 5);
+        std::vector<Posts> posts = repository.fetchPostsByDateRange("2021-01-01", "2021-01-31", 5);
 
-        redditPosts.fetchPosts();
+        for (const auto& post : posts) {
+            std::cout << "Post [Categoria: " << post.getCategoriaNome()
+                      << ", Categoria ID: " << post.getCategoriaId()
+                      << ", Latitude: " << post.getLatitude()
+                      << ", Longitude: " << post.getLongitude()
+                      << ", Criado em: " << post.getCriadoEm() << "]"
+                      << std::endl;
+        }
 
-    } catch (const std::exception& e) {
-        std::cerr << "Erro: " << e.what() << std::endl;
+        std::vector<CategoriaPopular> categoriasPopulares = repository.fetchMostPopularCategoriesByDateRange();
+
+        // Exibindo os resultados
+        for (const auto& categoria : categoriasPopulares) {
+            std::cout << "Categoria: " << categoria.categoria_nome
+                      << " | Total: " << categoria.total << std::endl;
+        }
+
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
     }
 
     return 0;
