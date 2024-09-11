@@ -11,6 +11,8 @@ public:
 
     std::vector<Posts> fetchPosts(int total = -1);
 
+    std::vector<Posts> fetchPostsByCategoryId(int categoryId, int total = 0);
+
 private:
     DatabaseConnection& dbConnection;
 };

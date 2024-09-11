@@ -8,10 +8,12 @@ int main() {
         DatabaseConnection db;
 
         RedditsPostsRepository repository(db);
-        std::vector<Posts> posts = repository.fetchPosts(10);
+        //std::vector<Posts> posts = repository.fetchPosts(10);
+        std::vector<Posts> posts = repository.fetchPostsByCategoryId(3, 5);
 
         for (const auto& post : posts) {
             std::cout << "Post [Categoria: " << post.getCategoriaNome()
+                      << ", Categoria ID: " << post.getCategoriaId()
                       << ", Latitude: " << post.getLatitude()
                       << ", Longitude: " << post.getLongitude()
                       << ", Criado em: " << post.getCriadoEm() << "]"
