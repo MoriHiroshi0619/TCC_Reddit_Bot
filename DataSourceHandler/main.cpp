@@ -23,7 +23,6 @@ int main() {
 
         std::vector<CategoriaPopular> categoriasPopulares = repository.fetchMostPopularCategoriesByDateRange();
 
-        // Exibindo os resultados
         for (const auto& categoria : categoriasPopulares) {
             std::cout << "Categoria: " << categoria.categoria_nome
                       << " | Total: " << categoria.total << std::endl;
