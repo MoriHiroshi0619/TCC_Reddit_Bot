@@ -20,5 +20,12 @@ private:
     std::string categoriaNome;
     std::string criadoEm;
 };
+struct CategoriaPopular {
+    int categoria_id;
+    std::string categoria_nome;
+    int total;
 
+    CategoriaPopular(int id, const std::string& nome, int count)
+        : categoria_id(id), categoria_nome(nome), total(count) {}
+};
 #endif

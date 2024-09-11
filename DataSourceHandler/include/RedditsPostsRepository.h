@@ -14,6 +14,8 @@ public:
     std::vector<Posts> fetchPostsByCategoryId(int categoryId, int total = 0);
 
     std::vector<Posts> fetchPostsByDateRange(const std::string& startDate, const std::string& endDate, int total = 0);
+
+    std::vector<CategoriaPopular> fetchMostPopularCategoriesByDateRange(const std::string& startDate = "", const std::string& endDate = "");
 private:
     DatabaseConnection& dbConnection;
 };
