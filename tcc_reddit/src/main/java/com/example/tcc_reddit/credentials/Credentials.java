@@ -53,7 +53,7 @@ public class Credentials {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         header.add("Authorization", "Basic " + autorizacaoEnconded);
-        header.set("User-Agent", "tccBot");
+        header.set("User-Agent", "TCC universitário");
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "password");
