@@ -5,7 +5,6 @@ import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
-
 abstract public class BaseReddit {
     private final String baseUrl;
 
@@ -34,7 +33,6 @@ abstract public class BaseReddit {
         public String getPathWithParam(String parametro) {
             return this.path.replace("{param}", parametro);
         }
-
     }
 
     protected String getAccesstoken()
