@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 abstract public class BaseReddit {
     private final String baseUrl;
-
     private final String userAgent;
     private static String accesstoken;
 
@@ -29,7 +28,6 @@ abstract public class BaseReddit {
         RedditEndpoint(String path) {
             this.path = path;
         }
-
         public String getPathWithParam(String parametro) {
             return this.path.replace("{param}", parametro);
         }

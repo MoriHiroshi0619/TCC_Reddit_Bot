@@ -97,9 +97,7 @@ public class RedditService extends BaseReddit {
             }else{
                 resultado = this.subRedditPostService.fetchPosts(subReddit.getSubRedditName(), null, subReddit.getBefore(), limite, sort);
             }
-
-            RedditListingDTO posts = (RedditListingDTO) resultado.get("redditListinfDto");
-
+            RedditListingDTO posts = (RedditListingDTO) resultado.get("redditListingDto");
             Map<String, Object> resultadoSalvos = this.subRedditPostService.savePosts(posts, peso);
             String postId = (String) resultadoSalvos.get("lastPostId");
             int totalSalvos = (int) resultadoSalvos.get("totalSalvo");
@@ -113,30 +111,19 @@ public class RedditService extends BaseReddit {
                 retorno.put("continuar", false);
                 return retorno;
             }
-
-            if(!subReddit.isAcabou_after()){
-                subReddit.setAfter("t3_" + postId);
-            }else{
-                subReddit.setBefore("t3_" + postId);
-            }
-
-            if(subReddit.getBefore() == null){
-                subReddit.setBefore("t3_" + postId);
-            }
-
+            if(!subReddit.isAcabou_after()){ subReddit.setAfter("t3_" + postId); }
+            else{ subReddit.setBefore("t3_" + postId); }
+            if(subReddit.getBefore() == null){ subReddit.setBefore("t3_" + postId); }
             this.subRedditService.save(subReddit);
-
             String requests_remaing = (String) resultado.get("requests_remaing");
             String requests_used = (String) resultado.get("requests_used");
             String requests_reset = (String) resultado.get("requests_reset");
-
             System.out.println("\n--------------------------------------------");
             System.out.println("API: requests remaing            -> " + requests_remaing);
             System.out.println("API: requests used               -> " + requests_used);
             System.out.println("API: requests to reset           -> " + requests_reset);
             System.out.println("Nome do Subreddit                -> " + subReddit.getSubRedditName());
             MemoryService.logMemoryUsage();
-
             Thread.sleep(intervalo * 1000L);
             retorno.put("continuar", true);
             retorno.put("qtdPostsLidos", totalSalvos);

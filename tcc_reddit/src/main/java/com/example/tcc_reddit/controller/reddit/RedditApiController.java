@@ -47,7 +47,7 @@ public class RedditApiController extends BaseReddit {
             int intervalo = Integer.parseInt((String) dados.getOrDefault("intervalo", "10"));
             int limite = Integer.parseInt((String) dados.getOrDefault("limite", "50"));
             String sort = (String) dados.getOrDefault("sort", "new");
-            int peso = Integer.parseInt((String) dados.getOrDefault("before", "12"));
+            int peso = Integer.parseInt((String) dados.getOrDefault("peso", "12"));
             List<String> subreddits = (List<String>) dados.get("subreddits");
 
             this.streamingActive = true;

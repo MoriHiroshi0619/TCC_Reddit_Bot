@@ -51,20 +51,11 @@ public class SubRedditPostService extends BaseReddit {
 
     public Map<String, Object>fetchPosts(String subreddit, String after, String before, Integer limit, String sort) throws RedditApiException {
         String url = getEndpointPathWithParam(RedditEndpoint.FETCH_SUBREDDIT_POSTS, subreddit);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url).queryParam("sort", sort);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("sort", sort);
-
-        if (after != null && !after.isEmpty()) {
-            uriBuilder.queryParam("after", after);
-        }
-        if (before != null && !before.isEmpty()) {
-            uriBuilder.queryParam("before", before);
-        }
-        if (limit != null) {
-            uriBuilder.queryParam("limit", limit);
-        }
-
+        if (after != null && !after.isEmpty()) { uriBuilder.queryParam("after", after); }
+        if (before != null && !before.isEmpty()) { uriBuilder.queryParam("before", before); }
+        if (limit != null) { uriBuilder.queryParam("limit", limit); }
         String finalUrl = uriBuilder.toUriString();
 
         HttpHeaders header = new HttpHeaders();
@@ -72,15 +63,12 @@ public class SubRedditPostService extends BaseReddit {
         header.set("Authorization", getAccesstoken());
 
         HttpEntity<String> entity = new HttpEntity<>(header);
-
         RestTemplate restTemplate = new RestTemplate();
-
         try {
             ResponseEntity<RedditListingDTO> response = restTemplate.exchange(finalUrl, HttpMethod.GET, entity, RedditListingDTO.class);
-
             if (response.getStatusCode() == HttpStatus.OK) {
                 Map<String, Object> resultado = new HashMap<>();
-                resultado.put("redditListinfDto", response.getBody());
+                resultado.put("redditListingDto", response.getBody());
                 resultado.put("requests_remaing", response.getHeaders().get("x-ratelimit-remaining").get(0));
                 resultado.put("requests_used", response.getHeaders().get("x-ratelimit-used").get(0));
                 resultado.put("requests_reset", response.getHeaders().get("x-ratelimit-reset").get(0));
@@ -107,14 +95,11 @@ public class SubRedditPostService extends BaseReddit {
             if (post instanceof RedditPostDTO) {
                 try {
                     RedditPostDataDTO postData = ((RedditPostDTO) post).getData();
-
                     Optional<SubRedditPost> verificaSeExiste = this.repository.findFirstByPostId(postData.getId());
                     if (verificaSeExiste.isPresent()) {
                         continue;
                     }
-
                     lastPostData.set(postData);
-
                     SubRedditPost subRedditPost = new SubRedditPost();
                     subRedditPost.setPostId(postData.getId());
                     subRedditPost.setName(postData.getName());
@@ -134,31 +119,24 @@ public class SubRedditPostService extends BaseReddit {
                     subRedditPost.setOver_18(postData.isOver_18());
                     subRedditPost.setCreated_utc(postData.getCreated_utc());
                     subRedditPost.setEdited_at(postData.getEdited_at());
-
                     Optional<SubReddit> subreddit = this.subRedditService.getByid(postData.getSubreddit_id());
                     subreddit.ifPresent(subRedditPost::setSubreddit_id);
-
                     Municipio municipio = this.municipioService.getRandomMunicipio();
                     subRedditPost.setMunicipio_id(municipio);
-
                     this.repository.save(subRedditPost);
                     totalSalvo+= 1;
-
                     List<Map<String, Object>> categorias = this.categoriaService.definirCategorias(postData.getTitle(), postData.getSelftext(), pesoMinimo);
                     categorias.forEach(categoria -> {
                         int categoriaId = (int) categoria.get("id_categoria");
                         int peso = (int) categoria.get("peso_postagem");
                         Optional<Categoria> categoriaEntity = this.categoriaService.getById(categoriaId);
-
                         categoriaEntity.ifPresent(categoriaGet -> this.subredditPostCategoriaServive.store(categoriaGet, subRedditPost, peso));
                     });
-
                 } catch (Exception e) {
                     throw new RuntimeException("Erro ao tentar salvar post: " + e.getMessage() + post);
                 }
             }
         }
-
         RedditPostDataDTO lastPost = lastPostData.get();
         String lastPostId = null;
         if (lastPost != null) {
