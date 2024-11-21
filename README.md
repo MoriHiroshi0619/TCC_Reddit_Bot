@@ -8,6 +8,7 @@ O objetivo deste projeto era desenvolver um robô automatizado para coletar dado
 
 ## 🗂️ Estrutura do Projeto
 - DataSourceHandler: Diretório onde está o código C++ responsável pela integração com o Time Hierarchy Stream Cube (THSC).
+  - **Importante**: O THSC é uma aplicação de terceiros criada pela Professora Dra. Raquel Marcia Müller, da Universidade Estadual de Mato Grosso do Sul. É necessário obter aprovação da professora para o uso da ferramenta.
 - tcc_reddit: Diretório onde está a aplicação Java Spring.
 - subreddits23: Contém postagens de subreddits específicos, salvos e comprimidos no formato `.zst`.
 
